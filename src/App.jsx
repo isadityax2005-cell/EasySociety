@@ -1,432 +1,1237 @@
 import React, { useState, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { mockFlats, MONTH, MAINTENANCE_AMOUNT, BANK } from './data';
+import {
+  LayoutDashboard,
+  ReceiptText,
+  Users,
+  PieChart,
+  Settings,
+  Send,
+  CheckCircle2,
+  AlertCircle,
+  Clock,
+  QrCode,
+  Download,
+  Printer,
+  Search,
+  Building2,
+  CreditCard,
+  FileSpreadsheet,
+  PlusCircle,
+  Check,
+  X,
+  ExternalLink,
+  MessageSquare,
+  Sparkles,
+  ShieldCheck,
+  DollarSign,
+  TrendingUp,
+  Wallet,
+  Phone,
+  Mail,
+  Car,
+  Home,
+  UserCheck,
+  FileCheck
+} from 'lucide-react';
+import {
+  SOCIETY_INFO,
+  BANK_INFO,
+  BILLING_CONFIG,
+  initialFlats,
+  initialExpenses,
+  initialTransactions
+} from './data';
 import './index.css';
 
-// ─────────────────────────────────────────
-// ICONS (simple SVG components)
-// ─────────────────────────────────────────
-const Icon = ({ d, size = 18, color = 'currentColor' }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
-    stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d={d} />
-  </svg>
-);
-
-const Icons = {
-  dashboard: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10',
-  billing:   'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6 M16 13H8 M16 17H8 M10 9H8',
-  residents: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75',
-  reports:   'M18 20V10 M12 20V4 M6 20v-6',
-  settings:  'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z',
-  send:      'M22 2L11 13 M22 2L15 22 8 13 2 10z',
-  check:     'M20 6L9 17l-5-5',
-  receipt:   'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6 M12 18v-6 M9 15h6',
-  bell:      'M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9 M13.73 21a2 2 0 0 1-3.46 0',
-  qr:        'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h3v3h-3z M17 17h3v3h-3z',
-  close:     'M18 6L6 18 M6 6l12 12',
-  download:  'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4 M7 10l5 5 5-5 M12 15V3',
-  whatsapp:  'M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z M12 22c-5.523 0-10-4.477-10-10S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z',
-};
-
-// ─────────────────────────────────────────
-// TOAST
-// ─────────────────────────────────────────
-function Toast({ message, onClose }) {
-  useEffect(() => {
-    const t = setTimeout(onClose, 3500);
-    return () => clearTimeout(t);
-  }, []);
-  return (
-    <div className="toast">
-      <span className="toast-icon">✓</span>
-      <span>{message}</span>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────
-// RECEIPT MODAL
-// ─────────────────────────────────────────
-function ReceiptModal({ flat, onClose }) {
-  const receiptId = `ES-${flat.flatNumber}-${Date.now().toString(36).toUpperCase()}`;
-  const today = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' });
-
-  return (
-    <div className="modal-overlay" onClick={(e) => e.target.classList.contains('modal-overlay') && onClose()}>
-      <div className="receipt-modal">
-        <div className="receipt-header">
-          <div className="receipt-header-logo">🏢 EasySociety</div>
-          <p>Golden Nest Phase 1 Co-operative Housing Society</p>
-          <p>Mira Road (E), Thane — 401107</p>
-          <div className="receipt-id">RECEIPT # {receiptId}</div>
-        </div>
-
-        <div className="receipt-body">
-          {[
-            ['Date', today],
-            ['Flat No.', `Flat ${flat.flatNumber}`],
-            ['Resident', flat.ownerName],
-            ['Mobile', flat.phone],
-            ['Month', MONTH],
-            ['Bank', BANK.name],
-            ['UTR / Ref No.', flat.utrNumber || 'VERIFIED BY TREASURER'],
-            ['Payment Mode', 'UPI / QR Code'],
-          ].map(([label, value]) => (
-            <div className="receipt-row" key={label}>
-              <span className="receipt-row-label">{label}</span>
-              <span className="receipt-row-value">{value}</span>
-            </div>
-          ))}
-        </div>
-
-        <div style={{ padding: '0 28px' }}>
-          <div className="receipt-total-row">
-            <span className="receipt-total-label">Total Paid</span>
-            <span className="receipt-total-value">₹{flat.maintenanceAmount.toLocaleString('en-IN')}</span>
-          </div>
-        </div>
-
-        <div className="receipt-footer">
-          <div className="receipt-status-badge">✓ &nbsp;Payment Verified & Received</div>
-          <p className="receipt-disclaimer">
-            This is a computer-generated receipt by EasySociety.<br />
-            For queries, contact your Society Treasurer.
-          </p>
-          <button className="receipt-close-btn" onClick={onClose}>Close Receipt</button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────
-// SIDEBAR
-// ─────────────────────────────────────────
-function Sidebar() {
-  const [active, setActive] = useState('Dashboard');
-  const navItems = [
-    { label: 'Dashboard',  icon: Icons.dashboard,  section: 'main' },
-    { label: 'Billing',    icon: Icons.billing,    section: 'main' },
-    { label: 'Residents',  icon: Icons.residents,  section: 'main' },
-    { label: 'Reports',    icon: Icons.reports,    section: 'main' },
-    { label: 'Settings',   icon: Icons.settings,   section: 'bottom' },
-  ];
-
-  return (
-    <aside className="sidebar">
-      <div className="sidebar-logo">
-        <div className="sidebar-logo-icon">ES</div>
-        <div className="sidebar-logo-text">
-          <strong>EasySociety</strong>
-          <span>Treasurer Portal</span>
-        </div>
-      </div>
-
-      <nav className="sidebar-nav">
-        <div className="sidebar-section-label">Main Menu</div>
-        {navItems.filter(n => n.section === 'main').map(item => (
-          <div
-            key={item.label}
-            className={`sidebar-nav-item ${active === item.label ? 'active' : ''}`}
-            onClick={() => setActive(item.label)}
-          >
-            <span className="sidebar-nav-icon"><Icon d={item.icon} size={17} /></span>
-            {item.label}
-          </div>
-        ))}
-
-        <div className="sidebar-section-label" style={{ marginTop: 16 }}>System</div>
-        {navItems.filter(n => n.section === 'bottom').map(item => (
-          <div
-            key={item.label}
-            className={`sidebar-nav-item ${active === item.label ? 'active' : ''}`}
-            onClick={() => setActive(item.label)}
-          >
-            <span className="sidebar-nav-icon"><Icon d={item.icon} size={17} /></span>
-            {item.label}
-          </div>
-        ))}
-      </nav>
-
-      <div className="sidebar-bottom">
-        <div className="sidebar-user">
-          <div className="sidebar-avatar">RD</div>
-          <div className="sidebar-user-info">
-            <strong>Ramesh Das</strong>
-            <span>Treasurer, Building A</span>
-          </div>
-        </div>
-      </div>
-    </aside>
-  );
-}
-
-// ─────────────────────────────────────────
-// ACTION PANEL (Right panel)
-// ─────────────────────────────────────────
-function ActionPanel({ flat, onVerify, onClose }) {
-  const [showReceipt, setShowReceipt] = useState(false);
-
-  const upiString = `upi://pay?pa=${BANK.upiId}&pn=${encodeURIComponent(BANK.account)}&am=${flat.maintenanceAmount}&cu=INR&tn=${encodeURIComponent(`Maintenance ${flat.flatNumber} ${MONTH}`)}`;
-
-  if (!flat) {
-    return (
-      <div className="action-panel">
-        <div className="action-panel-empty">
-          <div className="action-panel-empty-icon">🏠</div>
-          <p>Select any flat from the grid to manage billing, generate QR codes, and verify payments.</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="action-panel">
-      {showReceipt && <ReceiptModal flat={flat} onClose={() => setShowReceipt(false)} />}
-
-      <div className="flat-detail-header">
-        <div className="flat-detail-title">
-          <h2>Flat {flat.flatNumber}</h2>
-          <p>{flat.ownerName}</p>
-          <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>{flat.phone}</p>
-        </div>
-        <button className="flat-close-btn" onClick={onClose}>
-          <Icon d={Icons.close} size={14} />
-        </button>
-      </div>
-
-      {/* Amount */}
-      <div className="amount-display">
-        <div>
-          <div className="amount-label">Maintenance Due</div>
-          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>{MONTH}</div>
-        </div>
-        <div className="amount-value">
-          <span className="amount-currency">₹</span>
-          {flat.maintenanceAmount.toLocaleString('en-IN')}
-        </div>
-      </div>
-
-      {flat.status !== 'Paid' ? (
-        <>
-          {/* QR Code */}
-          <div className="qr-container">
-            <div className="qr-frame">
-              <QRCodeSVG
-                value={upiString}
-                size={160}
-                fgColor="#1a1a2e"
-                bgColor="#ffffff"
-                level="H"
-              />
-            </div>
-            <div className="qr-bank-badge">
-              <div className="qr-bank-icon">VJ</div>
-              <div className="qr-bank-info">
-                <strong>{BANK.name}</strong>
-                <span>{BANK.upiId} · ₹{flat.maintenanceAmount}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Buttons */}
-          <div className="action-buttons">
-            <button className="action-btn btn-secondary">
-              <Icon d={Icons.whatsapp} size={16} />
-              Send QR via WhatsApp
-            </button>
-            <button
-              className="action-btn btn-success"
-              onClick={() => onVerify(flat.id)}
-            >
-              <Icon d={Icons.check} size={16} />
-              Verify Payment Received
-            </button>
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="paid-state">
-            <div className="paid-checkmark">✓</div>
-            <h3>Payment Verified</h3>
-            <p>Maintenance collected for {MONTH}</p>
-            <div className="paid-date">Paid on {flat.lastPaymentDate}</div>
-          </div>
-          <div className="action-buttons" style={{ marginTop: 24 }}>
-            <button
-              className="action-btn btn-primary"
-              onClick={() => setShowReceipt(true)}
-            >
-              <Icon d={Icons.receipt} size={16} />
-              View Digital Receipt
-            </button>
-            <button className="action-btn btn-secondary">
-              <Icon d={Icons.download} size={16} />
-              Download PDF Receipt
-            </button>
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────
-// MAIN DASHBOARD
-// ─────────────────────────────────────────
 export default function App() {
-  const [flats, setFlats] = useState(mockFlats);
-  const [selected, setSelected] = useState(null);
-  const [filter, setFilter] = useState('All');
-  const [toast, setToast] = useState(null);
+  // Navigation State
+  const [activeTab, setActiveTab] = useState('Dashboard');
+  
+  // Data States
+  const [flats, setFlats] = useState(initialFlats);
+  const [expenses, setExpenses] = useState(initialExpenses);
+  const [transactions, setTransactions] = useState(initialTransactions);
+  const [selectedFlat, setSelectedFlat] = useState(null);
+  const [statusFilter, setStatusFilter] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const stats = {
-    total:     flats.length,
-    paid:      flats.filter(f => f.status === 'Paid').length,
-    pending:   flats.filter(f => f.status === 'Pending').length,
-    overdue:   flats.filter(f => f.status === 'Overdue').length,
-    collected: flats.filter(f => f.status === 'Paid').reduce((a,c) => a + c.maintenanceAmount, 0),
-    expected:  flats.reduce((a,c) => a + c.maintenanceAmount, 0),
-  };
-  const pct = Math.round((stats.collected / stats.expected) * 100);
+  // Modals & Notifications
+  const [showReceiptModal, setShowReceiptModal] = useState(false);
+  const [receiptFlat, setReceiptFlat] = useState(null);
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
+  const [verifyFlat, setVerifyFlat] = useState(null);
+  const [verifyUtrInput, setVerifyUtrInput] = useState('');
+  const [showBatchBillModal, setShowBatchBillModal] = useState(false);
+  const [batchProgress, setBatchProgress] = useState(0);
+  const [batchCompleted, setBatchCompleted] = useState(false);
+  const [showExpenseModal, setShowExpenseModal] = useState(false);
+  const [newExpense, setNewExpense] = useState({ category: 'Security Services', title: '', amount: '', paidTo: '' });
+  const [showDefaulterNoticeModal, setShowDefaulterNoticeModal] = useState(false);
+  const [defaulterNoticeFlat, setDefaulterNoticeFlat] = useState(null);
+  const [toastMessage, setToastMessage] = useState(null);
 
-  const filteredFlats = filter === 'All'
-    ? flats
-    : flats.filter(f => f.status === filter);
-
-  const handleVerify = (id) => {
-    setFlats(prev => prev.map(f =>
-      f.id === id ? {
-        ...f,
-        status: 'Paid',
-        lastPaymentDate: new Date().toISOString().split('T')[0],
-        utrNumber: `UTR${Date.now().toString().slice(-10)}`,
-      } : f
-    ));
-    const updated = flats.find(f => f.id === id);
-    setSelected(prev => prev?.id === id ? { ...prev, status: 'Paid', lastPaymentDate: new Date().toISOString().split('T')[0] } : prev);
-    setToast(`✅ Flat ${updated?.flatNumber} marked as paid! Receipt generated.`);
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3800);
   };
 
-  const today = new Date().toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  // Stats Calculations
+  const totalFlats = flats.length;
+  const paidFlats = flats.filter(f => f.status === 'Paid');
+  const pendingFlats = flats.filter(f => f.status === 'Pending');
+  const overdueFlats = flats.filter(f => f.status === 'Overdue');
+  const totalCollected = paidFlats.reduce((sum, f) => sum + f.amount, 0);
+  const totalExpected = flats.reduce((sum, f) => sum + f.amount, 0);
+  const totalOverdueDues = overdueFlats.reduce((sum, f) => sum + (f.duesHistory || f.amount), 0);
+  const recoveryPercentage = Math.round((totalCollected / totalExpected) * 100);
+
+  // Filtered Flats
+  const filteredFlats = flats.filter(f => {
+    const matchesStatus = statusFilter === 'All' || f.status === statusFilter;
+    const matchesSearch = f.flatNumber.includes(searchQuery) ||
+                          f.ownerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          f.phone.includes(searchQuery);
+    return matchesStatus && matchesSearch;
+  });
+
+  // Verify Payment Handler
+  const handleConfirmVerify = () => {
+    if (!verifyFlat) return;
+    const utr = verifyUtrInput.trim() || `UTR${Date.now().toString().slice(-8)}`;
+    const today = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+
+    setFlats(prev => prev.map(f => f.id === verifyFlat.id ? {
+      ...f,
+      status: 'Paid',
+      paymentDate: today,
+      utr: utr,
+      duesHistory: 0,
+    } : f));
+
+    // Add transaction to bank ledger
+    const newTx = {
+      id: `tx-${Date.now()}`,
+      date: today,
+      desc: `UPI: Flat ${verifyFlat.flatNumber} ${verifyFlat.ownerName} Maint ${BILLING_CONFIG.currentMonth}`,
+      type: 'Credit',
+      amount: verifyFlat.amount,
+      ref: `UPI/VJSB/${utr}`,
+      balance: BANK_INFO.currentBalance + verifyFlat.amount,
+    };
+    setTransactions(prev => [newTx, ...prev]);
+
+    if (selectedFlat?.id === verifyFlat.id) {
+      setSelectedFlat(prev => ({ ...prev, status: 'Paid', paymentDate: today, utr: utr }));
+    }
+
+    setShowVerifyModal(false);
+    setVerifyUtrInput('');
+    showToast(`✅ Payment of ₹${verifyFlat.amount} for Flat ${verifyFlat.flatNumber} verified! Digital receipt dispatched.`);
+  };
+
+  // Batch Billing Simulation
+  const handleStartBatchBilling = () => {
+    setShowBatchBillModal(true);
+    setBatchProgress(0);
+    setBatchCompleted(false);
+
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 20;
+      setBatchProgress(progress);
+      if (progress >= 100) {
+        clearInterval(interval);
+        setBatchCompleted(true);
+        showToast(`🚀 Maintenance Bills with Vasai Janta QR sent to all 25 flats via WhatsApp!`);
+      }
+    }, 400);
+  };
+
+  // Add Expense Handler
+  const handleAddExpense = (e) => {
+    e.preventDefault();
+    if (!newExpense.title || !newExpense.amount) return;
+    const today = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    const expItem = {
+      id: `exp-${Date.now()}`,
+      category: newExpense.category,
+      title: newExpense.title,
+      amount: parseFloat(newExpense.amount),
+      date: today,
+      paidTo: newExpense.paidTo || 'Vendor',
+      receiptNo: `VOUCH-${Math.floor(100 + Math.random() * 900)}`,
+      status: 'Paid via Vasai Janta Bank'
+    };
+    setExpenses(prev => [expItem, ...prev]);
+    setShowExpenseModal(false);
+    setNewExpense({ category: 'Security Services', title: '', amount: '', paidTo: '' });
+    showToast(`💸 Society Expense of ₹${expItem.amount} recorded.`);
+  };
+
+  // Generate WhatsApp Direct Link
+  const getWhatsAppBillingLink = (flat) => {
+    const text = encodeURIComponent(
+      `*Golden Nest Phase 1 CHS — Building A*\n` +
+      `Dear ${flat.ownerName} (Flat ${flat.flatNumber}),\n` +
+      `Your Society Maintenance bill for *${BILLING_CONFIG.currentMonth}* is *₹${flat.amount}*.\n` +
+      `Due Date: *${BILLING_CONFIG.dueDate}*\n\n` +
+      `*Bank:* ${BANK_INFO.bankName}\n` +
+      `*UPI ID:* ${BANK_INFO.upiId}\n\n` +
+      `Click here to pay directly via UPI App: upi://pay?pa=${BANK_INFO.upiId}&pn=GoldenNestPh1&am=${flat.amount}&cu=INR\n\n` +
+      `Kindly pay on time to avoid late fees. Regards, Ramesh Das (Treasurer).`
+    );
+    return `https://wa.me/${flat.phone.replace(/[^0-9]/g, '')}?text=${text}`;
+  };
 
   return (
     <div className="app-shell">
-      <Sidebar />
+      {/* Dynamic Ambient Mesh Canvas (Layers.ai aesthetic) */}
+      <div className="ambient-canvas">
+        <div className="ambient-orb-1" />
+        <div className="ambient-orb-2" />
+        <div className="ambient-orb-3" />
+      </div>
 
-      <main className="main-content">
+      {/* =========================================================
+          SIDEBAR NAVIGATION (Fully functional multi-tab switcher)
+          ========================================================= */}
+      <aside className="sidebar">
+        <div className="brand-header">
+          <div className="brand-badge">ES</div>
+          <div className="brand-info">
+            <h1>EasySociety</h1>
+            <p>Treasurer Portal</p>
+          </div>
+        </div>
+
+        <div className="society-badge-pill">
+          <Building2 size={13} />
+          <span>Golden Nest Ph 1 • Bldg A</span>
+        </div>
+
+        <nav className="sidebar-nav">
+          <div className="nav-section-title">Core Management</div>
+          
+          <div
+            className={`nav-item ${activeTab === 'Dashboard' ? 'active' : ''}`}
+            onClick={() => setActiveTab('Dashboard')}
+          >
+            <LayoutDashboard size={18} />
+            <span>Dashboard</span>
+          </div>
+
+          <div
+            className={`nav-item ${activeTab === 'Billing' ? 'active' : ''}`}
+            onClick={() => setActiveTab('Billing')}
+          >
+            <ReceiptText size={18} />
+            <span>Billing & Invoices</span>
+            {pendingFlats.length > 0 && (
+              <span className="nav-item-badge">{pendingFlats.length}</span>
+            )}
+          </div>
+
+          <div
+            className={`nav-item ${activeTab === 'Residents' ? 'active' : ''}`}
+            onClick={() => setActiveTab('Residents')}
+          >
+            <Users size={18} />
+            <span>25 Flats Directory</span>
+          </div>
+
+          <div
+            className={`nav-item ${activeTab === 'Reports' ? 'active' : ''}`}
+            onClick={() => setActiveTab('Reports')}
+          >
+            <PieChart size={18} />
+            <span>Accounts & Bank</span>
+          </div>
+
+          <div className="nav-section-title" style={{ marginTop: 12 }}>Society Config</div>
+
+          <div
+            className={`nav-item ${activeTab === 'Settings' ? 'active' : ''}`}
+            onClick={() => setActiveTab('Settings')}
+          >
+            <Settings size={18} />
+            <span>CHS Profile & Bank</span>
+          </div>
+        </nav>
+
+        <div className="sidebar-footer">
+          <div className="user-card">
+            <div className="user-avatar">RD</div>
+            <div className="user-info">
+              <div className="user-name">{SOCIETY_INFO.committee.treasurer.name}</div>
+              <div className="user-role">{SOCIETY_INFO.committee.treasurer.role}</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      {/* =========================================================
+          MAIN VIEWPORT (Switches based on activeTab)
+          ========================================================= */}
+      <main className="main-viewport">
         {/* Topbar */}
-        <div className="topbar">
-          <div className="topbar-greeting">
-            <h1>Maintenance Dashboard</h1>
-            <p>Golden Nest Phase 1 · Building A · {MONTH}</p>
+        <header className="topbar">
+          <div className="topbar-left">
+            <h2>
+              {activeTab === 'Dashboard' && <>🏢 Golden Nest Phase 1 — Building A</>}
+              {activeTab === 'Billing' && <>🧾 Maintenance Billing & Invoices</>}
+              {activeTab === 'Residents' && <>👥 25 Flats Resident Directory</>}
+              {activeTab === 'Reports' && <>📊 Society Accounts & Vasai Janta Bank</>}
+              {activeTab === 'Settings' && <>⚙️ Society Profile & Bank Setup</>}
+            </h2>
+            <p>
+              {activeTab === 'Dashboard' && `${BILLING_CONFIG.currentMonth} Cycle • 25 Flats • Automated UPI Verification Engine`}
+              {activeTab === 'Billing' && `Manage Monthly Dues, Issue Receipts & Dispatch WhatsApp QR Bills`}
+              {activeTab === 'Residents' && `Owner Details, Contact Numbers & Vehicle Logs for Building A`}
+              {activeTab === 'Reports' && `Vasai Janta Sahakari Bank Account Passbook & Society Expense Ledgers`}
+              {activeTab === 'Settings' && `Registration: ${SOCIETY_INFO.regNo}`}
+            </p>
           </div>
-          <div className="topbar-date">{today}</div>
-        </div>
 
-        {/* Stats */}
-        <div className="stats-grid">
-          {[
-            { label: 'Total Flats',   value: stats.total,     sub: 'Building A',          icon: '🏠', cls: 'stat-card-primary' },
-            { label: 'Paid',          value: stats.paid,      sub: `₹${stats.collected.toLocaleString('en-IN')} collected`, icon: '✅', cls: 'stat-card-success' },
-            { label: 'Pending',       value: stats.pending,   sub: `₹${(stats.pending * MAINTENANCE_AMOUNT).toLocaleString('en-IN')} due`, icon: '⏳', cls: 'stat-card-warning' },
-            { label: 'Overdue',       value: stats.overdue,   sub: 'Requires attention',  icon: '🔴', cls: 'stat-card-danger'  },
-          ].map(s => (
-            <div className={`stat-card ${s.cls}`} key={s.label}>
-              <div className="stat-card-icon" style={{ fontSize: 20 }}>{s.icon}</div>
-              <div className="stat-card-label">{s.label}</div>
-              <div className="stat-card-value">{s.value}</div>
-              <div className="stat-card-sub">{s.sub}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Collection Progress */}
-        <div className="collection-bar-wrap">
-          <div className="collection-header">
-            <h2>Collection Progress — {MONTH}</h2>
-            <div className="collection-amounts">
-              <strong>₹{stats.collected.toLocaleString('en-IN')}</strong>
-              <span style={{ color: 'var(--text-muted)' }}> / ₹{stats.expected.toLocaleString('en-IN')}</span>
-              <span style={{ marginLeft: 12, color: 'var(--accent-cyan)', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
-                {pct}%
-              </span>
-            </div>
-          </div>
-          <div className="progress-track">
-            <div className="progress-fill" style={{ width: `${pct}%` }} />
-          </div>
-          <div className="collection-segments">
-            {[
-              { color: 'var(--paid-color)',    label: `Paid (${stats.paid})` },
-              { color: 'var(--pending-color)', label: `Pending (${stats.pending})` },
-              { color: 'var(--overdue-color)', label: `Overdue (${stats.overdue})` },
-            ].map(seg => (
-              <div className="segment" key={seg.label}>
-                <div className="segment-dot" style={{ background: seg.color, boxShadow: `0 0 6px ${seg.color}` }} />
-                {seg.label}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Flats + Action Panel */}
-        <div className="dashboard-grid">
-          {/* Flat Grid */}
-          <div className="flat-panel">
-            <div className="panel-header">
-              <div className="panel-title">
-                <div className="panel-title-icon">🏗️</div>
-                Building A — All Flats
-              </div>
-              <button className="bill-all-btn">
-                <Icon d={Icons.send} size={15} />
-                Send Bills to All
+          <div className="topbar-actions">
+            {activeTab === 'Dashboard' && (
+              <button
+                className="btn-pill btn-primary-gradient"
+                onClick={handleStartBatchBilling}
+              >
+                <Send size={15} />
+                <span>Auto-Bill All 25 Flats</span>
               </button>
-            </div>
-
-            {/* Filters */}
-            <div className="filter-pills">
-              {['All','Paid','Pending','Overdue'].map(f => (
-                <button
-                  key={f}
-                  className={`filter-pill ${filter === f ? `active-${f.toLowerCase()}` : ''}`}
-                  onClick={() => setFilter(f)}
-                >
-                  {f} {f !== 'All' && `(${flats.filter(x => x.status === f).length})`}
-                </button>
-              ))}
-            </div>
-
-            {/* Grid */}
-            <div className="flats-grid">
-              {filteredFlats.map(flat => (
-                <div
-                  key={flat.id}
-                  className={`flat-card ${flat.status.toLowerCase()} ${selected?.id === flat.id ? 'selected' : ''}`}
-                  onClick={() => setSelected(flat)}
-                >
-                  <div className="flat-number">{flat.flatNumber}</div>
-                  <span className={`status-badge badge-${flat.status.toLowerCase()}`}>
-                    {flat.status}
-                  </span>
-                </div>
-              ))}
-            </div>
+            )}
+            {activeTab === 'Reports' && (
+              <button
+                className="btn-pill btn-emerald"
+                onClick={() => setShowExpenseModal(true)}
+              >
+                <PlusCircle size={15} />
+                <span>Record Society Expense</span>
+              </button>
+            )}
+            {activeTab === 'Billing' && (
+              <button
+                className="btn-pill btn-primary-gradient"
+                onClick={handleStartBatchBilling}
+              >
+                <MessageSquare size={15} />
+                <span>Dispatch WhatsApp QRs</span>
+              </button>
+            )}
+            <button
+              className="btn-pill btn-glass"
+              onClick={() => showToast(`⚡ Syncing with Vasai Janta Bank (VJSB) gateway... Live!`)}
+            >
+              <CreditCard size={15} />
+              <span>Vasai Janta Bank: ₹{BANK_INFO.currentBalance.toLocaleString('en-IN')}</span>
+            </button>
           </div>
+        </header>
 
-          {/* Action Panel */}
-          <ActionPanel
-            flat={selected}
-            onVerify={handleVerify}
-            onClose={() => setSelected(null)}
-          />
+        {/* Content Container */}
+        <div className="content-area">
+          {/* ═════════════════════════════════════════════════════════
+              VIEW 1: DASHBOARD
+              ═════════════════════════════════════════════════════════ */}
+          {activeTab === 'Dashboard' && (
+            <>
+              {/* Bento Stat Cards */}
+              <div className="bento-stats-grid">
+                <div className="bento-card stat-glow-purple">
+                  <div className="stat-icon-wrapper">🏢</div>
+                  <div className="stat-label">Total Flats</div>
+                  <div className="stat-value">{totalFlats}</div>
+                  <div className="stat-subtext">5 Floors • 100% Occupied</div>
+                </div>
+
+                <div className="bento-card stat-glow-emerald">
+                  <div className="stat-icon-wrapper">✅</div>
+                  <div className="stat-label">Collected</div>
+                  <div className="stat-value">₹{totalCollected.toLocaleString('en-IN')}</div>
+                  <div className="stat-subtext" style={{ color: '#34d399' }}>
+                    {paidFlats.length} of 25 Flats Paid
+                  </div>
+                </div>
+
+                <div className="bento-card stat-glow-amber">
+                  <div className="stat-icon-wrapper">⏳</div>
+                  <div className="stat-label">Pending Dues</div>
+                  <div className="stat-value">₹{(pendingFlats.length * BILLING_CONFIG.totalAmount).toLocaleString('en-IN')}</div>
+                  <div className="stat-subtext" style={{ color: '#fbbf24' }}>
+                    {pendingFlats.length} Flats Pending
+                  </div>
+                </div>
+
+                <div className="bento-card stat-glow-rose">
+                  <div className="stat-icon-wrapper">🔴</div>
+                  <div className="stat-label">Overdue Defaulters</div>
+                  <div className="stat-value">₹{totalOverdueDues.toLocaleString('en-IN')}</div>
+                  <div className="stat-subtext" style={{ color: '#fb7185' }}>
+                    {overdueFlats.length} Flats Require Attention
+                  </div>
+                </div>
+              </div>
+
+              {/* Recovery Hero Bar */}
+              <div className="collection-hero-bar">
+                <div className="progress-header">
+                  <div className="progress-title-group">
+                    <h3>Maintenance Collection Progress — {BILLING_CONFIG.currentMonth}</h3>
+                    <p>Vasai Janta Sahakari Bank Account Auto-Reconciliation Engine</p>
+                  </div>
+                  <div className="progress-numbers">
+                    <strong>₹{totalCollected.toLocaleString('en-IN')}</strong>
+                    <span>/ ₹{totalExpected.toLocaleString('en-IN')}</span>
+                    <span style={{ marginLeft: 10, color: '#38bdf8', fontWeight: 800 }}>({recoveryPercentage}%)</span>
+                  </div>
+                </div>
+
+                <div className="progress-track-outer">
+                  <div className="progress-track-fill" style={{ width: `${recoveryPercentage}%` }} />
+                </div>
+
+                <div className="progress-breakdown-tags">
+                  <div className="tag-item">
+                    <div className="tag-dot" style={{ background: '#10b981', boxShadow: '0 0 8px #10b981' }} />
+                    <span>Paid: {paidFlats.length} flats (₹{totalCollected.toLocaleString('en-IN')})</span>
+                  </div>
+                  <div className="tag-item">
+                    <div className="tag-dot" style={{ background: '#f59e0b', boxShadow: '0 0 8px #f59e0b' }} />
+                    <span>Pending: {pendingFlats.length} flats</span>
+                  </div>
+                  <div className="tag-item">
+                    <div className="tag-dot" style={{ background: '#f43f5e', boxShadow: '0 0 8px #f43f5e' }} />
+                    <span>Overdue: {overdueFlats.length} flats</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Spatial Matrix Grid & Action Dock */}
+              <div className="matrix-layout-grid">
+                {/* 25 Flats Grid Panel */}
+                <div className="matrix-main-panel">
+                  <div className="matrix-panel-header">
+                    <h3>
+                      <span>🏢 Building A — 25 Flats Spatial Board</span>
+                    </h3>
+                  </div>
+
+                  {/* Filter Toolbar */}
+                  <div className="filter-toolbar">
+                    <div className="filter-pills-group">
+                      {['All', 'Paid', 'Pending', 'Overdue'].map(st => (
+                        <button
+                          key={st}
+                          className={`filter-btn ${statusFilter === st ? `active active-${st.toLowerCase()}` : ''}`}
+                          onClick={() => setStatusFilter(st)}
+                        >
+                          {st} {st === 'All' ? `(${flats.length})` : `(${flats.filter(f => f.status === st).length})`}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="search-input-box">
+                      <Search size={14} className="search-icon-pos" />
+                      <input
+                        type="text"
+                        placeholder="Search flat / name..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  {/* The 25 Flats Spatial Grid */}
+                  <div className="flats-spatial-grid">
+                    {filteredFlats.map(flat => (
+                      <div
+                        key={flat.id}
+                        className={`flat-tile tile-${flat.status.toLowerCase()} ${selectedFlat?.id === flat.id ? 'selected' : ''}`}
+                        onClick={() => setSelectedFlat(flat)}
+                      >
+                        <div className="flat-tile-number">{flat.flatNumber}</div>
+                        <div className="flat-tile-owner">{flat.ownerName}</div>
+                        <span className={`status-pill status-pill-${flat.status.toLowerCase()}`}>
+                          {flat.status}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Right Action Dock */}
+                <div className="action-dock-panel">
+                  {selectedFlat ? (
+                    <>
+                      <div className="dock-header">
+                        <div>
+                          <div className="dock-flat-title">Flat {selectedFlat.flatNumber}</div>
+                          <div className="dock-owner-name">{selectedFlat.ownerName}</div>
+                          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
+                            {selectedFlat.residentType} • {selectedFlat.phone}
+                          </div>
+                        </div>
+                        <button className="dock-close-btn" onClick={() => setSelectedFlat(null)}>
+                          <X size={15} />
+                        </button>
+                      </div>
+
+                      <div className="dock-amount-card">
+                        <div>
+                          <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
+                            Monthly Dues
+                          </div>
+                          <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{BILLING_CONFIG.currentMonth}</div>
+                        </div>
+                        <div className="dock-amount-val">₹{selectedFlat.amount.toLocaleString('en-IN')}</div>
+                      </div>
+
+                      {selectedFlat.status !== 'Paid' ? (
+                        <>
+                          <div className="qr-presentation-card">
+                            <QRCodeSVG
+                              value={`upi://pay?pa=${BANK_INFO.upiId}&pn=${encodeURIComponent(BANK_INFO.accountName)}&am=${selectedFlat.amount}&cu=INR&tn=${encodeURIComponent(`Maint ${selectedFlat.flatNumber} ${BILLING_CONFIG.currentMonth}`)}`}
+                              size={170}
+                              level="H"
+                            />
+                            <div style={{ fontSize: 10, color: '#475569', marginTop: 8, fontWeight: 700 }}>
+                              SCAN VIA GPAY / PHONEPE / PAYTM
+                            </div>
+                          </div>
+
+                          <div className="bank-vpa-pill">
+                            <div className="bank-icon-box">VJ</div>
+                            <div>
+                              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-pure)' }}>{BANK_INFO.bankName}</div>
+                              <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{BANK_INFO.upiId}</div>
+                            </div>
+                          </div>
+
+                          <div className="dock-actions-stack">
+                            <a
+                              href={getWhatsAppBillingLink(selectedFlat)}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="btn-pill btn-glass"
+                              style={{ justifyContent: 'center' }}
+                            >
+                              <MessageSquare size={16} />
+                              <span>Send QR via WhatsApp</span>
+                            </a>
+
+                            <button
+                              className="btn-pill btn-emerald"
+                              style={{ justifyContent: 'center' }}
+                              onClick={() => {
+                                setVerifyFlat(selectedFlat);
+                                setShowVerifyModal(true);
+                              }}
+                            >
+                              <CheckCircle2 size={16} />
+                              <span>1-Click Verify Payment</span>
+                            </button>
+
+                            {selectedFlat.status === 'Overdue' && (
+                              <button
+                                className="btn-pill btn-rose"
+                                style={{ justifyContent: 'center', marginTop: 4 }}
+                                onClick={() => {
+                                  setDefaulterNoticeFlat(selectedFlat);
+                                  setShowDefaulterNoticeModal(true);
+                                }}
+                              >
+                                <AlertCircle size={16} />
+                                <span>Generate Defaulter Notice</span>
+                              </button>
+                            )}
+                          </div>
+                        </>
+                      ) : (
+                        <div className="paid-confirmed-badge">
+                          <div className="paid-success-circle">✓</div>
+                          <h4 style={{ fontSize: 18, fontWeight: 800, color: '#34d399' }}>Payment Verified</h4>
+                          <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
+                            Received via UPI on {selectedFlat.paymentDate}
+                          </p>
+                          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-muted)' }}>
+                            Ref: {selectedFlat.utr || 'VERIFIED-BY-TREASURER'}
+                          </div>
+
+                          <div className="dock-actions-stack" style={{ width: '100%', marginTop: 16 }}>
+                            <button
+                              className="btn-pill btn-primary-gradient"
+                              style={{ justifyContent: 'center' }}
+                              onClick={() => {
+                                setReceiptFlat(selectedFlat);
+                                setShowReceiptModal(true);
+                              }}
+                            >
+                              <ReceiptText size={16} />
+                              <span>View Digital Society Receipt</span>
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="empty-dock">
+                      <div className="empty-dock-icon">
+                        <Building2 size={32} />
+                      </div>
+                      <div>
+                        <h4 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-pure)' }}>Select a Flat</h4>
+                        <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4, maxWidth: 220 }}>
+                          Click any flat from the 25-flat matrix to generate dynamic Vasai Janta Bank QR, dispatch WhatsApp reminders, or verify payments.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* ═════════════════════════════════════════════════════════
+              VIEW 2: BILLING & INVOICES
+              ═════════════════════════════════════════════════════════ */}
+          {activeTab === 'Billing' && (
+            <div className="table-container-card">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                <div>
+                  <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-pure)' }}>
+                    Society Billing Ledger — {BILLING_CONFIG.currentMonth}
+                  </h3>
+                  <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
+                    Standard Monthly Maintenance: ₹{BILLING_CONFIG.totalAmount} per flat (Due: {BILLING_CONFIG.dueDate})
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <button className="btn-pill btn-glass" onClick={() => showToast(`📥 Exported 25 Flats Ledger as CSV / Excel.`)}>
+                    <Download size={15} />
+                    <span>Export Ledger CSV</span>
+                  </button>
+                  <button className="btn-pill btn-primary-gradient" onClick={handleStartBatchBilling}>
+                    <Send size={15} />
+                    <span>Dispatch All Bills</span>
+                  </button>
+                </div>
+              </div>
+
+              <table className="society-table">
+                <thead>
+                  <tr>
+                    <th>Flat #</th>
+                    <th>Resident Name</th>
+                    <th>Type</th>
+                    <th>Maintenance</th>
+                    <th>Sinking Fund</th>
+                    <th>Water & Misc</th>
+                    <th>Total Bill</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {flats.map(flat => (
+                    <tr key={flat.id}>
+                      <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: 15 }}>
+                        {flat.flatNumber}
+                      </td>
+                      <td style={{ fontWeight: 600 }}>{flat.ownerName}</td>
+                      <td>
+                        <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 4, background: 'rgba(255,255,255,0.06)', color: 'var(--text-secondary)' }}>
+                          {flat.residentType}
+                        </span>
+                      </td>
+                      <td style={{ fontFamily: 'var(--font-mono)' }}>₹{BILLING_CONFIG.breakdown.maintenanceFee}</td>
+                      <td style={{ fontFamily: 'var(--font-mono)' }}>₹{BILLING_CONFIG.breakdown.sinkingFund}</td>
+                      <td style={{ fontFamily: 'var(--font-mono)' }}>₹{BILLING_CONFIG.breakdown.waterCharges + BILLING_CONFIG.breakdown.repairFund}</td>
+                      <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, color: 'var(--text-pure)' }}>
+                        ₹{flat.amount}
+                      </td>
+                      <td>
+                        <span className={`status-pill status-pill-${flat.status.toLowerCase()}`}>
+                          {flat.status}
+                        </span>
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          {flat.status === 'Paid' ? (
+                            <button
+                              className="btn-pill btn-glass"
+                              style={{ padding: '6px 12px', fontSize: 11 }}
+                              onClick={() => {
+                                setReceiptFlat(flat);
+                                setShowReceiptModal(true);
+                              }}
+                            >
+                              <ReceiptText size={13} />
+                              <span>Receipt</span>
+                            </button>
+                          ) : (
+                            <>
+                              <a
+                                href={getWhatsAppBillingLink(flat)}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="btn-pill btn-glass"
+                                style={{ padding: '6px 12px', fontSize: 11 }}
+                              >
+                                <MessageSquare size={13} />
+                                <span>WhatsApp</span>
+                              </a>
+                              <button
+                                className="btn-pill btn-emerald"
+                                style={{ padding: '6px 12px', fontSize: 11 }}
+                                onClick={() => {
+                                  setVerifyFlat(flat);
+                                  setShowVerifyModal(true);
+                                }}
+                              >
+                                <Check size={13} />
+                                <span>Verify</span>
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* ═════════════════════════════════════════════════════════
+              VIEW 3: RESIDENTS DIRECTORY
+              ═════════════════════════════════════════════════════════ */}
+          {activeTab === 'Residents' && (
+            <div className="table-container-card">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                <div>
+                  <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-pure)' }}>
+                    Golden Nest Phase 1 — Building A Residents
+                  </h3>
+                  <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
+                    25 Flats • 82 Registered Residents • Intercom & Vehicle Database
+                  </p>
+                </div>
+                <button className="btn-pill btn-primary-gradient" onClick={() => showToast(`👤 Add resident feature ready.`)}>
+                  <PlusCircle size={15} />
+                  <span>Register New Resident</span>
+                </button>
+              </div>
+
+              <table className="society-table">
+                <thead>
+                  <tr>
+                    <th>Flat #</th>
+                    <th>Resident / Member</th>
+                    <th>Role / Type</th>
+                    <th>Contact Phone</th>
+                    <th>Email Address</th>
+                    <th>Family Count</th>
+                    <th>Vehicle Reg. #</th>
+                    <th>Dues Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {flats.map(flat => (
+                    <tr key={flat.id}>
+                      <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: 16 }}>
+                        {flat.flatNumber}
+                      </td>
+                      <td style={{ fontWeight: 700, color: 'var(--text-pure)' }}>{flat.ownerName}</td>
+                      <td>
+                        <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 4, background: flat.ownerName.includes('(') ? 'rgba(99,102,241,0.2)' : 'rgba(255,255,255,0.06)', color: flat.ownerName.includes('(') ? '#a5b4fc' : 'var(--text-secondary)', fontWeight: 700 }}>
+                          {flat.residentType}
+                        </span>
+                      </td>
+                      <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                        <a href={`tel:${flat.phone}`} style={{ color: 'var(--accent-cyan)', textDecoration: 'none' }}>
+                          {flat.phone}
+                        </a>
+                      </td>
+                      <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{flat.email}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 700 }}>{flat.members}</td>
+                      <td style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-secondary)' }}>
+                        {flat.vehicle}
+                      </td>
+                      <td>
+                        <span className={`status-pill status-pill-${flat.status.toLowerCase()}`}>
+                          {flat.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* ═════════════════════════════════════════════════════════
+              VIEW 4: REPORTS & ACCOUNTS
+              ═════════════════════════════════════════════════════════ */}
+          {activeTab === 'Reports' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+              {/* Account Overview Cards */}
+              <div className="bento-stats-grid">
+                <div className="bento-card stat-glow-cyan">
+                  <div className="stat-icon-wrapper">🏦</div>
+                  <div className="stat-label">Vasai Janta Bank Balance</div>
+                  <div className="stat-value">₹{BANK_INFO.currentBalance.toLocaleString('en-IN')}</div>
+                  <div className="stat-subtext">A/c: {BANK_INFO.accountNumber}</div>
+                </div>
+
+                <div className="bento-card stat-glow-purple">
+                  <div className="stat-icon-wrapper">🛡️</div>
+                  <div className="stat-label">Sinking Fund Deposit</div>
+                  <div className="stat-value">₹{BANK_INFO.sinkingFundBalance.toLocaleString('en-IN')}</div>
+                  <div className="stat-subtext">Fixed Deposit in VJSB</div>
+                </div>
+
+                <div className="bento-card stat-glow-emerald">
+                  <div className="stat-icon-wrapper">🔧</div>
+                  <div className="stat-label">Major Repair Fund</div>
+                  <div className="stat-value">₹{BANK_INFO.repairFundBalance.toLocaleString('en-IN')}</div>
+                  <div className="stat-subtext">Reserved for Lift & Painting</div>
+                </div>
+
+                <div className="bento-card stat-glow-amber">
+                  <div className="stat-icon-wrapper">📋</div>
+                  <div className="stat-label">Monthly Expenses</div>
+                  <div className="stat-value">₹{expenses.reduce((s, e) => s + e.amount, 0).toLocaleString('en-IN')}</div>
+                  <div className="stat-subtext">{expenses.length} Expense Vouchers</div>
+                </div>
+              </div>
+
+              {/* Passbook / Transactions Table */}
+              <div className="table-container-card">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                  <div>
+                    <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-pure)' }}>
+                      Vasai Janta Sahakari Bank — Live Statement
+                    </h3>
+                    <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
+                      Auto-reconciled with Building A UPI and NEFT operations
+                    </p>
+                  </div>
+                  <button className="btn-pill btn-glass" onClick={() => showToast(`🖨️ Bank statement ready for Audit export.`)}>
+                    <Printer size={15} />
+                    <span>Print Statement</span>
+                  </button>
+                </div>
+
+                <table className="society-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Transaction Details</th>
+                      <th>Reference #</th>
+                      <th>Type</th>
+                      <th>Amount</th>
+                      <th>Balance</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {transactions.map(tx => (
+                      <tr key={tx.id}>
+                        <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{tx.date}</td>
+                        <td style={{ fontWeight: 600 }}>{tx.desc}</td>
+                        <td style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-muted)' }}>{tx.ref}</td>
+                        <td>
+                          <span style={{
+                            padding: '3px 8px',
+                            borderRadius: 4,
+                            fontSize: 11,
+                            fontWeight: 800,
+                            background: tx.type === 'Credit' ? 'rgba(16,185,129,0.15)' : 'rgba(244,63,94,0.15)',
+                            color: tx.type === 'Credit' ? '#34d399' : '#fb7185',
+                          }}>
+                            {tx.type}
+                          </span>
+                        </td>
+                        <td style={{
+                          fontFamily: 'var(--font-mono)',
+                          fontWeight: 800,
+                          color: tx.type === 'Credit' ? '#34d399' : '#fb7185'
+                        }}>
+                          {tx.type === 'Credit' ? '+' : '-'}₹{tx.amount.toLocaleString('en-IN')}
+                        </td>
+                        <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
+                          ₹{tx.balance.toLocaleString('en-IN')}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ═════════════════════════════════════════════════════════
+              VIEW 5: SETTINGS & CHS PROFILE
+              ═════════════════════════════════════════════════════════ */}
+          {activeTab === 'Settings' && (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+              {/* Society Profile */}
+              <div className="table-container-card">
+                <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-pure)', marginBottom: 16 }}>
+                  🏢 Society Registration Profile
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  <div>
+                    <label style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Society Name</label>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-pure)' }}>{SOCIETY_INFO.name}</div>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Registration No.</label>
+                    <div style={{ fontSize: 13, fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)' }}>{SOCIETY_INFO.regNo}</div>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Society Address</label>
+                    <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{SOCIETY_INFO.address}</div>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 10 }}>
+                    <div style={{ background: 'var(--bg-elevated)', padding: 12, borderRadius: 8 }}>
+                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Chairman</div>
+                      <div style={{ fontWeight: 700 }}>{SOCIETY_INFO.committee.chairman.name}</div>
+                      <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{SOCIETY_INFO.committee.chairman.phone}</div>
+                    </div>
+                    <div style={{ background: 'var(--bg-elevated)', padding: 12, borderRadius: 8 }}>
+                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Secretary</div>
+                      <div style={{ fontWeight: 700 }}>{SOCIETY_INFO.committee.secretary.name}</div>
+                      <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{SOCIETY_INFO.committee.secretary.phone}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bank Account Config */}
+              <div className="table-container-card">
+                <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-pure)', marginBottom: 16 }}>
+                  🏦 Vasai Janta Bank Setup
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  <div>
+                    <label style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Bank & Branch</label>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-pure)' }}>{BANK_INFO.bankName}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{BANK_INFO.branch}</div>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Account Name & Number</label>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-pure)' }}>{BANK_INFO.accountName}</div>
+                    <div style={{ fontSize: 13, fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)' }}>{BANK_INFO.accountNumber}</div>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>IFSC Code & UPI VPA</label>
+                    <div style={{ fontSize: 13, fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)' }}>IFSC: {BANK_INFO.ifsc}</div>
+                    <div style={{ fontSize: 14, fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#a5b4fc' }}>UPI: {BANK_INFO.upiId}</div>
+                  </div>
+                  <button className="btn-pill btn-primary-gradient" style={{ marginTop: 10, justifyContent: 'center' }} onClick={() => showToast(`⚙️ Bank configuration verified with Vasai Janta Bank API.`)}>
+                    <CheckCircle2 size={16} />
+                    <span>Save & Test Bank Gateway</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </main>
 
-      {/* Toast */}
-      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
+      {/* =========================================================
+          MODAL: DIGITAL SOCIETY RECEIPT (PRINTABLE / PDF COMPLIANT)
+          ========================================================= */}
+      {showReceiptModal && receiptFlat && (
+        <div className="modal-backdrop" onClick={() => setShowReceiptModal(false)}>
+          <div className="modal-content-card" onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid var(--border-subtle)' }}>
+              <h3 style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-pure)' }}>Digital Society Maintenance Receipt</h3>
+              <button className="dock-close-btn" onClick={() => setShowReceiptModal(false)}>
+                <X size={16} />
+              </button>
+            </div>
+
+            <div style={{ padding: 24 }}>
+              {/* The Skeuomorphic Paper Receipt */}
+              <div className="receipt-paper-ticket" id="printable-receipt">
+                <div className="receipt-header-top">
+                  <h2>{SOCIETY_INFO.name}</h2>
+                  <p>Regn. No: {SOCIETY_INFO.regNo}</p>
+                  <p>{SOCIETY_INFO.address}</p>
+                </div>
+
+                <div className="receipt-meta-grid">
+                  <div className="receipt-meta-item">
+                    <strong>Receipt No.</strong>
+                    <span>ES-2026-A{receiptFlat.flatNumber}</span>
+                  </div>
+                  <div className="receipt-meta-item">
+                    <strong>Date of Receipt</strong>
+                    <span>{receiptFlat.paymentDate || '01 Aug 2026'}</span>
+                  </div>
+                  <div className="receipt-meta-item">
+                    <strong>Flat & Wing</strong>
+                    <span style={{ fontWeight: 800 }}>Flat {receiptFlat.flatNumber} (Wing A)</span>
+                  </div>
+                  <div className="receipt-meta-item">
+                    <strong>Resident Name</strong>
+                    <span style={{ fontWeight: 700 }}>{receiptFlat.ownerName}</span>
+                  </div>
+                </div>
+
+                <table className="receipt-table-summary">
+                  <tbody>
+                    <tr>
+                      <td>Society Service & Maintenance Charges</td>
+                      <td style={{ textAlign: 'right', fontFamily: 'monospace' }}>₹{BILLING_CONFIG.breakdown.maintenanceFee}</td>
+                    </tr>
+                    <tr>
+                      <td>Sinking Fund Contribution</td>
+                      <td style={{ textAlign: 'right', fontFamily: 'monospace' }}>₹{BILLING_CONFIG.breakdown.sinkingFund}</td>
+                    </tr>
+                    <tr>
+                      <td>Building Repair & Painting Fund</td>
+                      <td style={{ textAlign: 'right', fontFamily: 'monospace' }}>₹{BILLING_CONFIG.breakdown.repairFund}</td>
+                    </tr>
+                    <tr>
+                      <td>Water Tanker & Common Electricity</td>
+                      <td style={{ textAlign: 'right', fontFamily: 'monospace' }}>₹{BILLING_CONFIG.breakdown.waterCharges}</td>
+                    </tr>
+                    <tr>
+                      <td>Festival Advance Contribution</td>
+                      <td style={{ textAlign: 'right', fontFamily: 'monospace' }}>₹{BILLING_CONFIG.breakdown.festivalAdvance}</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div className="receipt-total-banner">
+                  <span>TOTAL AMOUNT PAID</span>
+                  <span>₹{receiptFlat.amount.toLocaleString('en-IN')}</span>
+                </div>
+
+                <div className="receipt-stamp-seal">
+                  <span>★ VERIFIED ★</span>
+                  <span style={{ fontSize: 9 }}>TREASURER</span>
+                  <span style={{ fontSize: 8 }}>GOLDEN NEST CHS</span>
+                </div>
+
+                <div style={{ fontSize: 10, color: '#64748b', textAlign: 'center' }}>
+                  Bank: {BANK_INFO.bankName} • UTR Ref: {receiptFlat.utr || 'VERIFIED-BY-TREASURER'}<br />
+                  Computer generated electronic receipt by EasySociety. No physical signature required.
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
+                <button
+                  className="btn-pill btn-primary-gradient"
+                  style={{ flex: 1, justifyContent: 'center' }}
+                  onClick={() => {
+                    window.print();
+                    showToast(`🖨️ Printing / Saving PDF receipt for Flat ${receiptFlat.flatNumber}...`);
+                  }}
+                >
+                  <Printer size={16} />
+                  <span>Print / Save PDF Receipt</span>
+                </button>
+                <a
+                  href={getWhatsAppBillingLink(receiptFlat)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn-pill btn-glass"
+                  style={{ flex: 1, justifyContent: 'center' }}
+                >
+                  <MessageSquare size={16} />
+                  <span>Send via WhatsApp</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================
+          MODAL: PAYMENT VERIFICATION WITH UTR
+          ========================================================= */}
+      {showVerifyModal && verifyFlat && (
+        <div className="modal-backdrop" onClick={() => setShowVerifyModal(false)}>
+          <div className="modal-content-card" style={{ maxWidth: 460 }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ padding: 24 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(16,185,129,0.15)', color: '#34d399', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <CheckCircle2 size={24} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: 17, fontWeight: 800, color: 'var(--text-pure)' }}>
+                    Verify Payment for Flat {verifyFlat.flatNumber}
+                  </h3>
+                  <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{verifyFlat.ownerName}</p>
+                </div>
+              </div>
+
+              <div style={{ background: 'var(--bg-elevated)', padding: 14, borderRadius: 10, marginBottom: 16 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, marginBottom: 6 }}>
+                  <span style={{ color: 'var(--text-muted)' }}>Bill Amount:</span>
+                  <strong style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-pure)' }}>₹{verifyFlat.amount}</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
+                  <span style={{ color: 'var(--text-muted)' }}>Target Bank:</span>
+                  <span style={{ color: 'var(--accent-cyan)', fontWeight: 600 }}>{BANK_INFO.bankName}</span>
+                </div>
+              </div>
+
+              <label style={{ display: 'block', fontSize: 12, color: 'var(--text-secondary)', marginBottom: 6, fontWeight: 600 }}>
+                Bank UTR / Transaction Reference (Optional):
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. UTR89201419208 (Auto-generated if blank)"
+                value={verifyUtrInput}
+                onChange={(e) => setVerifyUtrInput(e.target.value)}
+                style={{
+                  width: '100%',
+                  background: 'rgba(15, 23, 42, 0.8)',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: 8,
+                  padding: '12px 14px',
+                  color: 'white',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: 13,
+                  marginBottom: 20,
+                  outline: 'none'
+                }}
+              />
+
+              <div style={{ display: 'flex', gap: 10 }}>
+                <button className="btn-pill btn-glass" style={{ flex: 1, justifyContent: 'center' }} onClick={() => setShowVerifyModal(false)}>
+                  Cancel
+                </button>
+                <button className="btn-pill btn-emerald" style={{ flex: 1, justifyContent: 'center' }} onClick={handleConfirmVerify}>
+                  Confirm & Generate Receipt
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================
+          MODAL: BATCH BILL DISPATCH PROGRESS
+          ========================================================= */}
+      {showBatchBillModal && (
+        <div className="modal-backdrop" onClick={() => batchCompleted && setShowBatchBillModal(false)}>
+          <div className="modal-content-card" style={{ maxWidth: 480 }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ padding: 28, textAlign: 'center' }}>
+              <div style={{ fontSize: 36, marginBottom: 12 }}>🚀</div>
+              <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-pure)' }}>
+                {batchCompleted ? 'All 25 Bills Dispatched!' : 'Sending WhatsApp QR Bills...'}
+              </h3>
+              <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 4 }}>
+                {batchCompleted
+                  ? `25 personalized UPI payment QR links delivered to Building A residents.`
+                  : `Connecting to Vasai Janta Bank gateway & dispatching WhatsApp bills (${batchProgress}%)...`}
+              </p>
+
+              <div style={{ height: 12, background: 'rgba(255,255,255,0.08)', borderRadius: 999, overflow: 'hidden', margin: '24px 0 16px' }}>
+                <div
+                  style={{
+                    height: '100%',
+                    width: `${batchProgress}%`,
+                    background: 'var(--grad-primary)',
+                    borderRadius: 999,
+                    transition: 'width 0.3s'
+                  }}
+                />
+              </div>
+
+              {batchCompleted && (
+                <button
+                  className="btn-pill btn-primary-gradient"
+                  style={{ width: '100%', justifyContent: 'center', marginTop: 10 }}
+                  onClick={() => setShowBatchBillModal(false)}
+                >
+                  Done
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================
+          MODAL: RECORD SOCIETY EXPENSE
+          ========================================================= */}
+      {showExpenseModal && (
+        <div className="modal-backdrop" onClick={() => setShowExpenseModal(false)}>
+          <div className="modal-content-card" style={{ maxWidth: 460 }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ padding: 24 }}>
+              <h3 style={{ fontSize: 17, fontWeight: 800, color: 'var(--text-pure)', marginBottom: 16 }}>
+                Record Society Maintenance Expense
+              </h3>
+              <form onSubmit={handleAddExpense} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <div>
+                  <label style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>Expense Category</label>
+                  <select
+                    value={newExpense.category}
+                    onChange={(e) => setNewExpense({ ...newExpense, category: e.target.value })}
+                    style={{ width: '100%', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', borderRadius: 8, padding: '10px 12px', color: 'white', marginTop: 4 }}
+                  >
+                    <option>Security Services</option>
+                    <option>Elevator AMC</option>
+                    <option>Common Electricity</option>
+                    <option>Water Tankers</option>
+                    <option>Housekeeping & Sweep</option>
+                    <option>Plumbing & Repairs</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>Description / Vendor</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Schindler Lift Monthly AMC"
+                    value={newExpense.title}
+                    onChange={(e) => setNewExpense({ ...newExpense, title: e.target.value })}
+                    style={{ width: '100%', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', borderRadius: 8, padding: '10px 12px', color: 'white', marginTop: 4 }}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>Amount (₹)</label>
+                  <input
+                    type="number"
+                    placeholder="e.g. 6500"
+                    value={newExpense.amount}
+                    onChange={(e) => setNewExpense({ ...newExpense, amount: e.target.value })}
+                    style={{ width: '100%', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', borderRadius: 8, padding: '10px 12px', color: 'white', marginTop: 4, fontFamily: 'var(--font-mono)' }}
+                    required
+                  />
+                </div>
+
+                <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
+                  <button type="button" className="btn-pill btn-glass" style={{ flex: 1, justifyContent: 'center' }} onClick={() => setShowExpenseModal(false)}>
+                    Cancel
+                  </button>
+                  <button type="submit" className="btn-pill btn-emerald" style={{ flex: 1, justifyContent: 'center' }}>
+                    Record Expense
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Floating Toast Notification */}
+      {toastMessage && (
+        <div className="toast-floating-pill">
+          <span>{toastMessage}</span>
+        </div>
+      )}
     </div>
   );
 }
