@@ -169,17 +169,53 @@ export default function App() {
     showToast(`💸 Society Expense of ₹${expItem.amount} recorded.`);
   };
 
-  // Generate WhatsApp Direct Link
+  // Generate WhatsApp Direct Billing Link (For Unpaid Flats)
   const getWhatsAppBillingLink = (flat) => {
     const text = encodeURIComponent(
-      `*Golden Nest Phase 1 CHS — Building A*\n` +
-      `Dear ${flat.ownerName} (Flat ${flat.flatNumber}),\n` +
-      `Your Society Maintenance bill for *${BILLING_CONFIG.currentMonth}* is *₹${flat.amount}*.\n` +
-      `Due Date: *${BILLING_CONFIG.dueDate}*\n\n` +
-      `*Bank:* ${BANK_INFO.bankName}\n` +
-      `*UPI ID:* ${BANK_INFO.upiId}\n\n` +
-      `Click here to pay directly via UPI App: upi://pay?pa=${BANK_INFO.upiId}&pn=GoldenNestPh1&am=${flat.amount}&cu=INR\n\n` +
-      `Kindly pay on time to avoid late fees. Regards, Ramesh Das (Treasurer).`
+      `🏛️ *GOLDEN NEST PHASE 1 CHS — BUILDING A*\n` +
+      `------------------------------------------\n` +
+      `Dear ${flat.ownerName} (Flat ${flat.flatNumber}),\n\n` +
+      `Your Maintenance bill for *${BILLING_CONFIG.currentMonth}* has been generated.\n\n` +
+      `📋 *Bill Breakdown:*\n` +
+      `• Maintenance Fee: ₹${BILLING_CONFIG.breakdown.maintenanceFee}\n` +
+      `• Sinking Fund: ₹${BILLING_CONFIG.breakdown.sinkingFund}\n` +
+      `• Repair & Painting Fund: ₹${BILLING_CONFIG.breakdown.repairFund}\n` +
+      `• Water & Electricity: ₹${BILLING_CONFIG.breakdown.waterCharges}\n` +
+      `• Festival Advance: ₹${BILLING_CONFIG.breakdown.festivalAdvance}\n` +
+      `------------------------------------------\n` +
+      `💵 *TOTAL AMOUNT DUE: ₹${flat.amount}*\n` +
+      `🗓️ *Due Date: ${BILLING_CONFIG.dueDate}*\n\n` +
+      `🏦 *Payment Details (Vasai Janta Bank):*\n` +
+      `• Account: ${BANK_INFO.accountName}\n` +
+      `• UPI ID: ${BANK_INFO.upiId}\n\n` +
+      `📲 *Click to Pay directly via GPay / PhonePe / Paytm:*\n` +
+      `upi://pay?pa=${BANK_INFO.upiId}&pn=GoldenNestPh1&am=${flat.amount}&cu=INR&tn=Maint_${flat.flatNumber}_${BILLING_CONFIG.currentMonth}\n\n` +
+      `_EasySociety Digital Portal • Ramesh Das (Treasurer)_`
+    );
+    return `https://wa.me/${flat.phone.replace(/[^0-9]/g, '')}?text=${text}`;
+  };
+
+  // Generate WhatsApp Official Payment Receipt Link (For Paid Flats)
+  const getWhatsAppReceiptLink = (flat) => {
+    const receiptNo = `ES-2026-A${flat.flatNumber}-${(flat.utr || 'VJSB').slice(-6)}`;
+    const text = encodeURIComponent(
+      `✅ *OFFICIAL MAINTENANCE RECEIPT*\n` +
+      `🏛️ *${SOCIETY_INFO.name}*\n` +
+      `Reg No: ${SOCIETY_INFO.regNo}\n` +
+      `------------------------------------------\n` +
+      `🧾 *Receipt No:* ${receiptNo}\n` +
+      `📅 *Date:* ${flat.paymentDate || '01 Aug 2026'}\n` +
+      `🏢 *Flat:* Flat ${flat.flatNumber} (Wing A)\n` +
+      `👤 *Resident:* ${flat.ownerName}\n` +
+      `🗓️ *Month:* ${BILLING_CONFIG.currentMonth}\n` +
+      `------------------------------------------\n` +
+      `💰 *AMOUNT RECEIVED: ₹${flat.amount.toLocaleString('en-IN')}*\n` +
+      `🏦 *Bank:* ${BANK_INFO.bankName}\n` +
+      `🔖 *Ref / UTR No:* ${flat.utr || 'VERIFIED-BY-TREASURER'}\n` +
+      `📌 *Status:* PAID & VERIFIED\n` +
+      `------------------------------------------\n` +
+      `This is an official computer-generated receipt issued via EasySociety.\n` +
+      `Treasurer: Ramesh Das (Building A)`
     );
     return `https://wa.me/${flat.phone.replace(/[^0-9]/g, '')}?text=${text}`;
   };
@@ -570,8 +606,19 @@ export default function App() {
                               }}
                             >
                               <ReceiptText size={16} />
-                              <span>View Digital Society Receipt</span>
+                              <span>View / Print Society Receipt</span>
                             </button>
+
+                            <a
+                              href={getWhatsAppReceiptLink(selectedFlat)}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="btn-pill btn-glass"
+                              style={{ justifyContent: 'center' }}
+                            >
+                              <MessageSquare size={16} />
+                              <span>Send Receipt via WhatsApp</span>
+                            </a>
                           </div>
                         </div>
                       )}

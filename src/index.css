@@ -1255,16 +1255,52 @@ body {
   }
 }
 
-@media (max-width: 900px) {
-  .app-shell {
-    flex-direction: column;
+/* =========================================================
+   PRINT MEDIA STYLES (Clean White Official Receipt PDF Export)
+   ========================================================= */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
   }
-  .sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
+
+  .ambient-canvas,
+  .sidebar,
+  .topbar,
+  .modal-backdrop button,
+  .dock-actions-stack,
+  .toast-floating-pill {
+    display: none !important;
   }
-  .flats-spatial-grid {
-    grid-template-columns: repeat(3, 1fr);
+
+  .modal-backdrop {
+    position: static !important;
+    background: transparent !important;
+    padding: 0 !important;
+    backdrop-filter: none !important;
+  }
+
+  .modal-content-card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    padding: 0 !important;
+  }
+
+  .receipt-paper-ticket {
+    box-shadow: none !important;
+    border: 2px solid #0f172a !important;
+    padding: 24px !important;
+    margin: 0 auto !important;
+    max-width: 600px !important;
+    page-break-inside: avoid;
+  }
+
+  .receipt-stamp-seal {
+    border-color: #059669 !important;
+    color: #059669 !important;
   }
 }
+
