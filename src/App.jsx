@@ -42,6 +42,7 @@ import {
   initialExpenses,
   initialTransactions
 } from './data';
+import { generateReceiptPDF } from './utils/pdfGenerator';
 import './index.css';
 
 export default function App() {
@@ -601,6 +602,18 @@ export default function App() {
                               className="btn-pill btn-primary-gradient"
                               style={{ justifyContent: 'center' }}
                               onClick={() => {
+                                generateReceiptPDF(selectedFlat, SOCIETY_INFO, BANK_INFO, BILLING_CONFIG);
+                                showToast(`📄 PDF Receipt for Flat ${selectedFlat.flatNumber} downloaded!`);
+                              }}
+                            >
+                              <Download size={16} />
+                              <span>Download Official PDF Receipt</span>
+                            </button>
+
+                            <button
+                              className="btn-pill btn-glass"
+                              style={{ justifyContent: 'center' }}
+                              onClick={() => {
                                 setReceiptFlat(selectedFlat);
                                 setShowReceiptModal(true);
                               }}
@@ -707,17 +720,42 @@ export default function App() {
                       <td>
                         <div style={{ display: 'flex', gap: 6 }}>
                           {flat.status === 'Paid' ? (
-                            <button
-                              className="btn-pill btn-glass"
-                              style={{ padding: '6px 12px', fontSize: 11 }}
-                              onClick={() => {
-                                setReceiptFlat(flat);
-                                setShowReceiptModal(true);
-                              }}
-                            >
-                              <ReceiptText size={13} />
-                              <span>Receipt</span>
-                            </button>
+                            <>
+                              <button
+                                className="btn-pill btn-primary-gradient"
+                                style={{ padding: '6px 10px', fontSize: 11 }}
+                                title="Download Official PDF Receipt"
+                                onClick={() => {
+                                  generateReceiptPDF(flat, SOCIETY_INFO, BANK_INFO, BILLING_CONFIG);
+                                  showToast(`📄 PDF Receipt for Flat ${flat.flatNumber} downloaded!`);
+                                }}
+                              >
+                                <Download size={13} />
+                                <span>PDF</span>
+                              </button>
+                              <button
+                                className="btn-pill btn-glass"
+                                style={{ padding: '6px 10px', fontSize: 11 }}
+                                onClick={() => {
+                                  setReceiptFlat(flat);
+                                  setShowReceiptModal(true);
+                                }}
+                              >
+                                <ReceiptText size={13} />
+                                <span>View</span>
+                              </button>
+                              <a
+                                href={getWhatsAppReceiptLink(flat)}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="btn-pill btn-glass"
+                                style={{ padding: '6px 10px', fontSize: 11 }}
+                                title="Send WhatsApp Receipt"
+                              >
+                                <MessageSquare size={13} />
+                                <span>WhatsApp</span>
+                              </a>
+                            </>
                           ) : (
                             <>
                               <a
@@ -1072,27 +1110,38 @@ export default function App() {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
+              <div style={{ display: 'flex', gap: 10, marginTop: 20, flexWrap: 'wrap' }}>
                 <button
                   className="btn-pill btn-primary-gradient"
-                  style={{ flex: 1, justifyContent: 'center' }}
+                  style={{ flex: 1, minWidth: 160, justifyContent: 'center' }}
+                  onClick={() => {
+                    generateReceiptPDF(receiptFlat, SOCIETY_INFO, BANK_INFO, BILLING_CONFIG);
+                    showToast(`📄 PDF Receipt for Flat ${receiptFlat.flatNumber} downloaded!`);
+                  }}
+                >
+                  <Download size={16} />
+                  <span>Download Official PDF</span>
+                </button>
+                <button
+                  className="btn-pill btn-glass"
+                  style={{ flex: 1, minWidth: 140, justifyContent: 'center' }}
                   onClick={() => {
                     window.print();
                     showToast(`🖨️ Printing / Saving PDF receipt for Flat ${receiptFlat.flatNumber}...`);
                   }}
                 >
                   <Printer size={16} />
-                  <span>Print / Save PDF Receipt</span>
+                  <span>Print Receipt</span>
                 </button>
                 <a
-                  href={getWhatsAppBillingLink(receiptFlat)}
+                  href={getWhatsAppReceiptLink(receiptFlat)}
                   target="_blank"
                   rel="noreferrer"
                   className="btn-pill btn-glass"
-                  style={{ flex: 1, justifyContent: 'center' }}
+                  style={{ flex: 1, minWidth: 140, justifyContent: 'center' }}
                 >
                   <MessageSquare size={16} />
-                  <span>Send via WhatsApp</span>
+                  <span>WhatsApp Receipt</span>
                 </a>
               </div>
             </div>
