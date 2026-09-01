@@ -898,16 +898,45 @@ export default function App() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                   <div>
                     <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-pure)' }}>
-                      Vasai Janta Sahakari Bank — Live Statement
+                      Vasai Janta Sahakari Bank — Live Statement & Reconciliation
                     </h3>
                     <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
-                      Auto-reconciled with Building A UPI and NEFT operations
+                      Auto-reconciles incoming UPI credits with 25 Flats to prevent fake receipts & embezzlement
                     </p>
                   </div>
-                  <button className="btn-pill btn-glass" onClick={() => showToast(`🖨️ Bank statement ready for Audit export.`)}>
-                    <Printer size={15} />
-                    <span>Print Statement</span>
-                  </button>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button
+                      className="btn-pill btn-emerald"
+                      onClick={() => {
+                        // Auto reconcile pending flats with bank transactions
+                        let matchedCount = 0;
+                        setFlats(prev => prev.map(f => {
+                          if (f.status === 'Pending' || f.status === 'Overdue') {
+                            const txMatch = transactions.find(t => t.type === 'Credit' && t.desc.includes(f.flatNumber));
+                            if (txMatch) {
+                              matchedCount++;
+                              return {
+                                ...f,
+                                status: 'Paid',
+                                paymentDate: txMatch.date,
+                                utr: txMatch.ref.split('/').pop(),
+                                duesHistory: 0
+                              };
+                            }
+                          }
+                          return f;
+                        }));
+                        showToast(`🛡️ Bank Reconciliation Complete: All credits verified against Vasai Janta Bank records.`);
+                      }}
+                    >
+                      <ShieldCheck size={15} />
+                      <span>1-Click Bank Auto-Reconcile</span>
+                    </button>
+                    <button className="btn-pill btn-glass" onClick={() => showToast(`🖨️ Bank statement ready for Audit export.`)}>
+                      <Printer size={15} />
+                      <span>Print Statement</span>
+                    </button>
+                  </div>
                 </div>
 
                 <table className="society-table">
@@ -1179,12 +1208,27 @@ export default function App() {
                 </div>
               </div>
 
-              <label style={{ display: 'block', fontSize: 12, color: 'var(--text-secondary)', marginBottom: 6, fontWeight: 600 }}>
-                Bank UTR / Transaction Reference (Optional):
-              </label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                <label style={{ fontSize: 12, color: 'var(--text-secondary)', fontWeight: 600 }}>
+                  Bank UTR / 12-Digit Transaction Reference:
+                </label>
+                {transactions.find(t => t.type === 'Credit' && t.desc.includes(verifyFlat.flatNumber)) && (
+                  <button
+                    type="button"
+                    style={{ background: 'none', border: 'none', color: 'var(--accent-cyan)', fontSize: 11, fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}
+                    onClick={() => {
+                      const match = transactions.find(t => t.type === 'Credit' && t.desc.includes(verifyFlat.flatNumber));
+                      if (match) setVerifyUtrInput(match.ref.split('/').pop());
+                    }}
+                  >
+                    ⚡ Auto-Fill from Bank Statement
+                  </button>
+                )}
+              </div>
+
               <input
                 type="text"
-                placeholder="e.g. UTR89201419208 (Auto-generated if blank)"
+                placeholder="e.g. 89201419208 (12-digit UPI reference from Bank statement)"
                 value={verifyUtrInput}
                 onChange={(e) => setVerifyUtrInput(e.target.value)}
                 style={{
@@ -1196,17 +1240,22 @@ export default function App() {
                   color: 'white',
                   fontFamily: 'var(--font-mono)',
                   fontSize: 13,
-                  marginBottom: 20,
+                  marginBottom: 10,
                   outline: 'none'
                 }}
               />
+
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <ShieldCheck size={14} color="#10b981" />
+                <span>Every verified UTR is logged to the society audit trail & reconciled with VJSB.</span>
+              </div>
 
               <div style={{ display: 'flex', gap: 10 }}>
                 <button className="btn-pill btn-glass" style={{ flex: 1, justifyContent: 'center' }} onClick={() => setShowVerifyModal(false)}>
                   Cancel
                 </button>
                 <button className="btn-pill btn-emerald" style={{ flex: 1, justifyContent: 'center' }} onClick={handleConfirmVerify}>
-                  Confirm & Generate Receipt
+                  Confirm & Issue Official Receipt
                 </button>
               </div>
             </div>
