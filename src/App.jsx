@@ -191,7 +191,7 @@ export default function App() {
       `• UPI ID: ${BANK_INFO.upiId}\n\n` +
       `📲 *Click to Pay directly via GPay / PhonePe / Paytm:*\n` +
       `upi://pay?pa=${BANK_INFO.upiId}&pn=GoldenNestPh1&am=${flat.amount}&cu=INR&tn=Maint_${flat.flatNumber}_${BILLING_CONFIG.currentMonth}\n\n` +
-      `_EasySociety Digital Portal • Ramesh Das (Treasurer)_`
+      `_EasySociety Digital Portal • Rajkumar Singh (Treasurer)_`
     );
     return `https://wa.me/${flat.phone.replace(/[^0-9]/g, '')}?text=${text}`;
   };
@@ -216,7 +216,7 @@ export default function App() {
       `📌 *Status:* PAID & VERIFIED\n` +
       `------------------------------------------\n` +
       `This is an official computer-generated receipt issued via EasySociety.\n` +
-      `Treasurer: Ramesh Das (Building A)`
+      `Treasurer: Rajkumar Singh (Building A)`
     );
     return `https://wa.me/${flat.phone.replace(/[^0-9]/g, '')}?text=${text}`;
   };
@@ -298,7 +298,7 @@ export default function App() {
 
         <div className="sidebar-footer">
           <div className="user-card">
-            <div className="user-avatar">RD</div>
+            <div className="user-avatar">RS</div>
             <div className="user-info">
               <div className="user-name">{SOCIETY_INFO.committee.treasurer.name}</div>
               <div className="user-role">{SOCIETY_INFO.committee.treasurer.role}</div>

@@ -217,7 +217,7 @@ export function generateReceiptPDF(flat, societyInfo, bankInfo, billingConfig) {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
   doc.setTextColor(...navy);
-  doc.text('Ramesh Das', 160, currentY + 12, { align: 'center' });
+  doc.text('Rajkumar Singh', 160, currentY + 12, { align: 'center' });
   doc.setFontSize(8);
   doc.setTextColor(...gray);
   doc.text('Hon. Treasurer (Building A)', 160, currentY + 20, { align: 'center' });

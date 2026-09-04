@@ -10,7 +10,7 @@ export const SOCIETY_INFO = {
   currentBuilding: 'Building A (Wing 1)',
   buildingFlatsCount: 25,
   committee: {
-    treasurer: { name: 'Ramesh Das', flat: 'A-201', phone: '+91 98201 44521', role: 'Building Treasurer' },
+    treasurer: { name: 'Rajkumar Singh', flat: 'A-201', phone: '+91 98201 44521', role: 'Building Treasurer' },
     secretary: { name: 'Mahesh K. Roy', flat: 'A-104', phone: '+91 98192 33140', role: 'Building Secretary' },
     chairman: { name: 'J.P. Sharma', flat: 'A-302', phone: '+91 98330 99812', role: 'Building Chairman' },
   }
@@ -52,7 +52,7 @@ export const initialFlats = [
   { id: '105', flatNumber: '105', floor: 1, wing: 'A', ownerName: 'Vikram Aditya Singh', residentType: 'Tenant', phone: '+91 98331 55105', email: 'vikram.singh@outlook.com', members: 2, vehicle: 'MH-04-JK-4415', status: 'Overdue', paymentDate: null, utr: null, amount: 2500, duesHistory: 5000 },
 
   // 2nd Floor
-  { id: '201', flatNumber: '201', floor: 2, wing: 'A', ownerName: 'Ramesh Das (Treasurer)', residentType: 'Owner', phone: '+91 98201 44521', email: 'ramesh.das.treasurer@gmail.com', members: 4, vehicle: 'MH-04-LM-9921', status: 'Paid', paymentDate: '01 Aug 2026', utr: 'UTR89201419206', amount: 2500, duesHistory: 0 },
+  { id: '201', flatNumber: '201', floor: 2, wing: 'A', ownerName: 'Rajkumar Singh (Treasurer)', residentType: 'Owner', phone: '+91 98201 44521', email: 'rajkumar.singh.treasurer@gmail.com', members: 4, vehicle: 'MH-04-LM-9921', status: 'Paid', paymentDate: '01 Aug 2026', utr: 'UTR89201419206', amount: 2500, duesHistory: 0 },
   { id: '202', flatNumber: '202', floor: 2, wing: 'A', ownerName: 'Rekha Surendra Nair', residentType: 'Owner', phone: '+91 98211 77202', email: 'rekha.nair@gmail.com', members: 3, vehicle: 'MH-04-NP-3322', status: 'Paid', paymentDate: '05 Aug 2026', utr: 'UTR89201419207', amount: 2500, duesHistory: 0 },
   { id: '203', flatNumber: '203', floor: 2, wing: 'A', ownerName: 'Arun B. Kapoor', residentType: 'Owner', phone: '+91 98920 88203', email: 'arunkapoor@hotmail.com', members: 4, vehicle: 'MH-04-QR-8823', status: 'Paid', paymentDate: '07 Aug 2026', utr: 'UTR89201419208', amount: 2500, duesHistory: 0 },
   { id: '204', flatNumber: '204', floor: 2, wing: 'A', ownerName: 'Sunita S. Gupta', residentType: 'Owner', phone: '+91 98334 11204', email: 'sunita.gupta@gmail.com', members: 2, vehicle: 'MH-04-ST-7724', status: 'Pending', paymentDate: null, utr: null, amount: 2500, duesHistory: 0 },
