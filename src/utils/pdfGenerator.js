@@ -2,7 +2,7 @@ import { jsPDF } from 'jspdf';
 
 /**
  * Generates an official, legal Maharashtra CHS Maintenance PDF Receipt
- * using vector drawing and typography in jsPDF.
+ * using vector drawing and typography in jsPDF for Sonam Palace CHS.
  */
 export function generateReceiptPDF(flat, societyInfo, bankInfo, billingConfig) {
   const doc = new jsPDF({
@@ -11,9 +11,10 @@ export function generateReceiptPDF(flat, societyInfo, bankInfo, billingConfig) {
     format: 'a4',
   });
 
-  const receiptNo = `ES-2026-A${flat.flatNumber}-${(flat.utr || 'VJSB').slice(-6)}`;
+  const receiptNo = `SP-2026-${flat.code || flat.flatNumber}-${(flat.utr || 'VJSB').slice(-6)}`;
   const paymentDate = flat.paymentDate || new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
-  const filename = `GoldenNest_Receipt_Flat_${flat.flatNumber}_${billingConfig.currentMonth.replace(/\s+/g, '_')}.pdf`;
+  const unitTag = flat.unitType === 'Shop' ? `Shop_${flat.flatNumber}` : `Flat_${flat.flatNumber}`;
+  const filename = `SonamPalace_Receipt_${unitTag}_${billingConfig.currentMonth.replace(/\s+/g, '_')}.pdf`;
 
   // Colors
   const navy = [15, 23, 42];
@@ -62,6 +63,10 @@ export function generateReceiptPDF(flat, societyInfo, bankInfo, billingConfig) {
   doc.setDrawColor(226, 232, 240);
   doc.roundedRect(18, 58, 174, 34, 2, 2, 'FD');
 
+  const unitDesc = flat.unitType === 'Shop' 
+    ? `${flat.shopNumber || flat.flatNumber} (Commercial Ground)` 
+    : `Flat ${flat.flatNumber} (Floor ${flat.floor === 0 ? 'Ground' : flat.floor})`;
+
   doc.setFontSize(9);
   // Column 1
   doc.setFont('helvetica', 'bold');
@@ -73,14 +78,14 @@ export function generateReceiptPDF(flat, societyInfo, bankInfo, billingConfig) {
 
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(...gray);
-  doc.text('FLAT & WING:', 24, 73);
+  doc.text('UNIT & PREMISES:', 24, 73);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(...navy);
-  doc.text(`Flat ${flat.flatNumber} (Wing A, Floor ${flat.floor || 1})`, 55, 73);
+  doc.text(unitDesc, 55, 73);
 
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(...gray);
-  doc.text('RESIDENT NAME:', 24, 81);
+  doc.text('OWNER / OCCUPANT:', 24, 81);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(...navy);
   doc.text(`${flat.ownerName} (${flat.residentType || 'Owner'})`, 55, 81);
@@ -132,12 +137,12 @@ export function generateReceiptPDF(flat, societyInfo, bankInfo, billingConfig) {
   doc.text('PARTICULARS / ACCOUNT HEAD', 38, tableTop + 5.5);
   doc.text('AMOUNT (INR)', 185, tableTop + 5.5, { align: 'right' });
 
+  const breakdown = flat.unitType === 'Shop' ? billingConfig.shopBreakdown : billingConfig.breakdown;
   const items = [
-    { sr: '1', name: 'Society Service & Maintenance Charges', amt: `Rs. ${billingConfig.breakdown.maintenanceFee.toFixed(2)}` },
-    { sr: '2', name: 'Sinking Fund Contribution (Statutory MCS Rule)', amt: `Rs. ${billingConfig.breakdown.sinkingFund.toFixed(2)}` },
-    { sr: '3', name: 'Building Major Repair & Painting Reserve Fund', amt: `Rs. ${billingConfig.breakdown.repairFund.toFixed(2)}` },
-    { sr: '4', name: 'Water Tanker & Common Electricity Charges', amt: `Rs. ${billingConfig.breakdown.waterCharges.toFixed(2)}` },
-    { sr: '5', name: 'Festival & Cultural Activity Advance', amt: `Rs. ${billingConfig.breakdown.festivalAdvance.toFixed(2)}` },
+    { sr: '1', name: flat.unitType === 'Shop' ? 'Shop Commercial Service & Maintenance Charges' : 'Society Service & Maintenance Charges', amt: `Rs. ${breakdown.maintenanceFee.toFixed(2)}` },
+    { sr: '2', name: 'Sinking Fund Contribution (Statutory MCS Rule)', amt: `Rs. ${breakdown.sinkingFund.toFixed(2)}` },
+    { sr: '3', name: 'Building Major Repair & Painting Reserve Fund', amt: `Rs. ${breakdown.repairFund.toFixed(2)}` },
+    { sr: '4', name: 'Water & Common Electricity Charges', amt: `Rs. ${breakdown.waterCharges.toFixed(2)}` },
   ];
 
   let currentY = tableTop + 8;
@@ -178,7 +183,10 @@ export function generateReceiptPDF(flat, societyInfo, bankInfo, billingConfig) {
   doc.setFont('helvetica', 'italic');
   doc.setFontSize(9);
   doc.setTextColor(...darkGray);
-  doc.text('Amount in words: Rupees Two Thousand Five Hundred Only', 24, currentY);
+  const words = flat.amount === 1200 
+    ? 'Rupees One Thousand Two Hundred Only' 
+    : 'Rupees Two Thousand Only';
+  doc.text(`Amount in words: ${words}`, 24, currentY);
 
   // 6. Bank Account & Settlement Note
   currentY += 10;
@@ -206,7 +214,7 @@ export function generateReceiptPDF(flat, societyInfo, bankInfo, billingConfig) {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7);
   doc.setTextColor(...emerald);
-  doc.text('GOLDEN NEST PH 1 CHS', 55, currentY + 7, { align: 'center' });
+  doc.text('SONAM PALACE CHS', 55, currentY + 7, { align: 'center' });
   doc.text('★ VERIFIED ★', 55, currentY + 11, { align: 'center' });
   doc.text('TREASURER OFFICE', 55, currentY + 15, { align: 'center' });
 
@@ -217,11 +225,11 @@ export function generateReceiptPDF(flat, societyInfo, bankInfo, billingConfig) {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
   doc.setTextColor(...navy);
-  doc.text('Rajkumar Singh', 160, currentY + 12, { align: 'center' });
+  doc.text(societyInfo.committee.treasurer.name, 160, currentY + 12, { align: 'center' });
   doc.setFontSize(8);
   doc.setTextColor(...gray);
-  doc.text('Hon. Treasurer (Building A)', 160, currentY + 20, { align: 'center' });
-  doc.text('Golden Nest Phase 1 CHS', 160, currentY + 24, { align: 'center' });
+  doc.text(`Hon. Treasurer (Flat ${societyInfo.committee.treasurer.flat})`, 160, currentY + 20, { align: 'center' });
+  doc.text('Sonam Palace CHS', 160, currentY + 24, { align: 'center' });
 
   // 8. Footer Note
   doc.setFont('helvetica', 'normal');

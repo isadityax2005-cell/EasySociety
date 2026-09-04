@@ -1,83 +1,105 @@
-// Golden Nest Phase 1 CHS — Comprehensive Data Engine
-// Structure: 25 Flats (5 Floors x 5 Flats per floor: 101-105, 201-205, 301-305, 401-405, 501-505)
+// Sonam Palace CHS — Comprehensive Data Engine
+// Structure: 32 Units (26 Residential Flats + 6 Commercial Ground Shops)
+// Ground Floor: Flats 001-002, Shops S001-S006
+// Floors 1 to 6: 4 flats per floor (101-104, 201-204, 301-304, 401-404, 501-504, 601-604)
 
 export const SOCIETY_INFO = {
-  name: 'Golden Nest Phase 1 Co-operative Housing Society Ltd.',
+  name: 'Sonam Palace Co-operative Housing Society Ltd.',
   regNo: 'TNA/MRA/HSG/(TC)/14892/2004',
-  address: 'Golden Nest Phase 1, Near Flyover, Mira-Bhayandar Road, Mira Road (E), Thane - 401107',
-  buildingsCount: 11,
-  totalFlatsInSociety: 500,
-  currentBuilding: 'Building A (Wing 1)',
-  buildingFlatsCount: 25,
+  address: 'Sonam Palace CHS, Mira-Bhayandar Road, Mira Road (E), Thane - 401107',
+  currentBuilding: 'Sonam Palace',
+  totalUnits: 32,
+  flatsCount: 26,
+  shopsCount: 6,
   committee: {
-    treasurer: { name: 'Rajkumar Singh', flat: 'A-201', phone: '+91 98201 44521', role: 'Building Treasurer' },
-    secretary: { name: 'Mahesh K. Roy', flat: 'A-104', phone: '+91 98192 33140', role: 'Building Secretary' },
-    chairman: { name: 'J.P. Sharma', flat: 'A-302', phone: '+91 98330 99812', role: 'Building Chairman' },
+    treasurer: { name: 'Rajkumar Singh', flat: '401', phone: '+91 93201 77469', role: 'Building Treasurer' },
+    secretary: { name: 'Mahesh K. Roy', flat: '104', phone: '+91 98192 33140', role: 'Building Secretary' },
+    chairman: { name: 'J.P. Sharma', flat: '302', phone: '+91 98330 99812', role: 'Building Chairman' },
   }
 };
 
 export const BANK_INFO = {
   bankName: 'Vasai Janta Sahakari Bank Ltd.',
   branch: 'Mira Road (East) Branch',
-  accountName: 'GOLDEN NEST PH 1 BLDG A CHS',
+  accountName: 'SONAM PALACE CHS MAINT A/C',
   accountNumber: '004210100049281',
   ifsc: 'VJSB0000042',
-  upiId: 'goldennest.bldgA@vjsb',
-  currentBalance: 384500,
-  sinkingFundBalance: 850000,
-  repairFundBalance: 420000,
+  upiId: 'sonampalace.chs@vjsb',
+  currentBalance: 462500,
+  sinkingFundBalance: 980000,
+  repairFundBalance: 520000,
 };
 
 export const BILLING_CONFIG = {
   currentMonth: 'August 2026',
   billDate: '01 Aug 2026',
   dueDate: '15 Aug 2026',
+  flatAmount: 2000,
+  shopAmount: 1200,
   breakdown: {
-    maintenanceFee: 1800,
-    sinkingFund: 250,
-    repairFund: 200,
+    maintenanceFee: 1500,
+    sinkingFund: 200,
+    repairFund: 150,
     waterCharges: 150,
-    festivalAdvance: 100,
   },
-  totalAmount: 2500,
+  shopBreakdown: {
+    maintenanceFee: 850,
+    sinkingFund: 150,
+    repairFund: 100,
+    waterCharges: 100,
+  },
+  totalAmount: 2000,
   lateFeePerMonth: 100,
 };
 
 export const initialFlats = [
+  // Ground Floor (Flats)
+  { id: '001', flatNumber: '001', floor: 0, wing: 'A', unitType: 'Flat', ownerName: 'Nazir Loladia', residentType: 'Owner', phone: '+91 98201 00101', email: 'nazir.loladia@gmail.com', members: 4, vehicle: 'MH-04-AA-1001', status: 'Paid', paymentDate: '03 Aug 2026', utr: 'UTR89201419001', amount: 2000, duesHistory: 0 },
+  { id: '002', flatNumber: '002', floor: 0, wing: 'A', unitType: 'Flat', ownerName: 'Veena Suresh Jha', residentType: 'Owner', phone: '+91 98201 00202', email: 'veena.jha002@gmail.com', members: 3, vehicle: 'MH-04-AA-1002', status: 'Paid', paymentDate: '05 Aug 2026', utr: 'UTR89201419002', amount: 2000, duesHistory: 0 },
+
   // 1st Floor
-  { id: '101', flatNumber: '101', floor: 1, wing: 'A', ownerName: 'Rameshwar Sharma', residentType: 'Owner', phone: '+91 98201 11201', email: 'r.sharma101@gmail.com', members: 4, vehicle: 'MH-04-AB-2101', status: 'Paid', paymentDate: '04 Aug 2026', utr: 'UTR89201419201', amount: 2500, duesHistory: 0 },
-  { id: '102', flatNumber: '102', floor: 1, wing: 'A', ownerName: 'Priya Nilesh Mehta', residentType: 'Owner', phone: '+91 98190 22102', email: 'pmehta102@yahoo.co.in', members: 3, vehicle: 'MH-04-CD-5542', status: 'Paid', paymentDate: '02 Aug 2026', utr: 'UTR89201419202', amount: 2500, duesHistory: 0 },
-  { id: '103', flatNumber: '103', floor: 1, wing: 'A', ownerName: 'Suresh V. Patel', residentType: 'Owner', phone: '+91 98205 33103', email: 'patel.suresh@gmail.com', members: 5, vehicle: 'MH-04-EF-9012', status: 'Paid', paymentDate: '06 Aug 2026', utr: 'UTR89201419203', amount: 2500, duesHistory: 0 },
-  { id: '104', flatNumber: '104', floor: 1, wing: 'A', ownerName: 'Aditya Singh (Test Flat)', residentType: 'Owner', phone: '+91 76009 39217', email: 'aditya.singh760@gmail.com', members: 3, vehicle: 'MH-04-GH-1104', status: 'Pending', paymentDate: null, utr: null, amount: 2500, duesHistory: 0 },
-  { id: '105', flatNumber: '105', floor: 1, wing: 'A', ownerName: 'Vikram Aditya Singh', residentType: 'Tenant', phone: '+91 98331 55105', email: 'vikram.singh@outlook.com', members: 2, vehicle: 'MH-04-JK-4415', status: 'Overdue', paymentDate: null, utr: null, amount: 2500, duesHistory: 5000 },
+  { id: '101', flatNumber: '101', floor: 1, wing: 'A', unitType: 'Flat', ownerName: 'Rasida Mehboob Loladia', residentType: 'Owner', phone: '+91 98201 10101', email: 'rasida.loladia101@gmail.com', members: 4, vehicle: 'MH-04-AB-1101', status: 'Paid', paymentDate: '04 Aug 2026', utr: 'UTR89201419101', amount: 2000, duesHistory: 0 },
+  { id: '102', flatNumber: '102', floor: 1, wing: 'A', unitType: 'Flat', ownerName: 'Prakashi Soni & Rashmi P. Soni', residentType: 'Owner', phone: '+91 98190 10202', email: 'prakashi.soni102@yahoo.co.in', members: 3, vehicle: 'MH-04-CD-1102', status: 'Paid', paymentDate: '02 Aug 2026', utr: 'UTR89201419102', amount: 2000, duesHistory: 0 },
+  { id: '103', flatNumber: '103', floor: 1, wing: 'A', unitType: 'Flat', ownerName: 'Arun Kumar Mondal', residentType: 'Owner', phone: '+91 98205 10303', email: 'arun.mondal103@gmail.com', members: 4, vehicle: 'MH-04-EF-1103', status: 'Paid', paymentDate: '06 Aug 2026', utr: 'UTR89201419103', amount: 2000, duesHistory: 0 },
+  { id: '104', flatNumber: '104', floor: 1, wing: 'A', unitType: 'Flat', ownerName: 'Akshay Sajeev Wagle & JT', residentType: 'Owner', phone: '+91 76009 39217', email: 'akshay.wagle104@gmail.com', members: 3, vehicle: 'MH-04-GH-1104', status: 'Pending', paymentDate: null, utr: null, amount: 2000, duesHistory: 0 },
 
   // 2nd Floor
-  { id: '201', flatNumber: '201', floor: 2, wing: 'A', ownerName: 'Rajkumar Singh (Treasurer)', residentType: 'Owner', phone: '+91 98201 44521', email: 'rajkumar.singh.treasurer@gmail.com', members: 4, vehicle: 'MH-04-LM-9921', status: 'Paid', paymentDate: '01 Aug 2026', utr: 'UTR89201419206', amount: 2500, duesHistory: 0 },
-  { id: '202', flatNumber: '202', floor: 2, wing: 'A', ownerName: 'Rekha Surendra Nair', residentType: 'Owner', phone: '+91 98211 77202', email: 'rekha.nair@gmail.com', members: 3, vehicle: 'MH-04-NP-3322', status: 'Paid', paymentDate: '05 Aug 2026', utr: 'UTR89201419207', amount: 2500, duesHistory: 0 },
-  { id: '203', flatNumber: '203', floor: 2, wing: 'A', ownerName: 'Arun B. Kapoor', residentType: 'Owner', phone: '+91 98920 88203', email: 'arunkapoor@hotmail.com', members: 4, vehicle: 'MH-04-QR-8823', status: 'Paid', paymentDate: '07 Aug 2026', utr: 'UTR89201419208', amount: 2500, duesHistory: 0 },
-  { id: '204', flatNumber: '204', floor: 2, wing: 'A', ownerName: 'Sunita S. Gupta', residentType: 'Owner', phone: '+91 98334 11204', email: 'sunita.gupta@gmail.com', members: 2, vehicle: 'MH-04-ST-7724', status: 'Pending', paymentDate: null, utr: null, amount: 2500, duesHistory: 0 },
-  { id: '205', flatNumber: '205', floor: 2, wing: 'A', ownerName: 'Manoj Kumar Yadav', residentType: 'Tenant', phone: '+91 98198 22205', email: 'manoj.yadav@tcs.com', members: 3, vehicle: 'MH-04-UV-6625', status: 'Overdue', paymentDate: null, utr: null, amount: 2500, duesHistory: 2500 },
+  { id: '201', flatNumber: '201', floor: 2, wing: 'A', unitType: 'Flat', ownerName: 'Bijendra Rana', residentType: 'Owner', phone: '+91 98211 20101', email: 'bijendra.rana201@gmail.com', members: 4, vehicle: 'MH-04-LM-2201', status: 'Paid', paymentDate: '01 Aug 2026', utr: 'UTR89201419201', amount: 2000, duesHistory: 0 },
+  { id: '202', flatNumber: '202', floor: 2, wing: 'A', unitType: 'Flat', ownerName: 'S.S Negi', residentType: 'Owner', phone: '+91 98211 20202', email: 'ss.negi202@gmail.com', members: 3, vehicle: 'MH-04-NP-2202', status: 'Paid', paymentDate: '05 Aug 2026', utr: 'UTR89201419202', amount: 2000, duesHistory: 0 },
+  { id: '203', flatNumber: '203', floor: 2, wing: 'A', unitType: 'Flat', ownerName: 'Deepaksingh S. Rawat', residentType: 'Owner', phone: '+91 98920 20303', email: 'deepak.rawat203@hotmail.com', members: 4, vehicle: 'MH-04-QR-2203', status: 'Paid', paymentDate: '07 Aug 2026', utr: 'UTR89201419203', amount: 2000, duesHistory: 0 },
+  { id: '204', flatNumber: '204', floor: 2, wing: 'A', unitType: 'Flat', ownerName: 'Mr Vivek R. Singh and Mrs Preeti V. Singh', residentType: 'Owner', phone: '+91 98334 20404', email: 'vivek.singh204@gmail.com', members: 3, vehicle: 'MH-04-ST-2204', status: 'Pending', paymentDate: null, utr: null, amount: 2000, duesHistory: 0 },
 
   // 3rd Floor
-  { id: '301', flatNumber: '301', floor: 3, wing: 'A', ownerName: 'Geeta R. Verma', residentType: 'Owner', phone: '+91 98200 44301', email: 'geeta.verma@gmail.com', members: 4, vehicle: 'MH-04-WX-1231', status: 'Paid', paymentDate: '03 Aug 2026', utr: 'UTR89201419211', amount: 2500, duesHistory: 0 },
-  { id: '302', flatNumber: '302', floor: 3, wing: 'A', ownerName: 'J.P. Sharma (Chairman)', residentType: 'Owner', phone: '+91 98330 99812', email: 'jpsharma.chairman@gmail.com', members: 5, vehicle: 'MH-04-YZ-5532', status: 'Paid', paymentDate: '01 Aug 2026', utr: 'UTR89201419212', amount: 2500, duesHistory: 0 },
-  { id: '303', flatNumber: '303', floor: 3, wing: 'A', ownerName: 'Kavita Anand Pandey', residentType: 'Owner', phone: '+91 98214 66303', email: 'kavita.pandey@gmail.com', members: 3, vehicle: 'MH-04-AA-9933', status: 'Paid', paymentDate: '08 Aug 2026', utr: 'UTR89201419213', amount: 2500, duesHistory: 0 },
-  { id: '304', flatNumber: '304', floor: 3, wing: 'A', ownerName: 'Sanjay H. Kumar', residentType: 'Owner', phone: '+91 98199 88304', email: 'sanjay.k@infosys.com', members: 4, vehicle: 'MH-04-BB-4434', status: 'Paid', paymentDate: '10 Aug 2026', utr: 'UTR89201419214', amount: 2500, duesHistory: 0 },
-  { id: '305', flatNumber: '305', floor: 3, wing: 'A', ownerName: 'Pooja Nitin Tiwari', residentType: 'Tenant', phone: '+91 98925 33305', email: 'pooja.tiwari@gmail.com', members: 2, vehicle: 'MH-04-CC-2235', status: 'Overdue', paymentDate: null, utr: null, amount: 2500, duesHistory: 7500 },
+  { id: '301', flatNumber: '301', floor: 3, wing: 'A', unitType: 'Flat', ownerName: 'Hayat Singh Rana', residentType: 'Owner', phone: '+91 98200 30101', email: 'hayat.rana301@gmail.com', members: 4, vehicle: 'MH-04-WX-3301', status: 'Paid', paymentDate: '03 Aug 2026', utr: 'UTR89201419301', amount: 2000, duesHistory: 0 },
+  { id: '302', flatNumber: '302', floor: 3, wing: 'A', unitType: 'Flat', ownerName: 'Sanjay Singh Rawat & Maya Sanjay Rawat', residentType: 'Owner', phone: '+91 98330 30202', email: 'sanjay.rawat302@gmail.com', members: 5, vehicle: 'MH-04-YZ-3302', status: 'Paid', paymentDate: '01 Aug 2026', utr: 'UTR89201419302', amount: 2000, duesHistory: 0 },
+  { id: '303', flatNumber: '303', floor: 3, wing: 'A', unitType: 'Flat', ownerName: 'Harbajan Singh', residentType: 'Owner', phone: '+91 98214 30303', email: 'harbajan.singh303@gmail.com', members: 4, vehicle: 'MH-04-AA-3303', status: 'Paid', paymentDate: '08 Aug 2026', utr: 'UTR89201419303', amount: 2000, duesHistory: 0 },
+  { id: '304', flatNumber: '304', floor: 3, wing: 'A', unitType: 'Flat', ownerName: 'Pancham Singh Rawat', residentType: 'Owner', phone: '+91 98199 30404', email: 'pancham.rawat304@gmail.com', members: 4, vehicle: 'MH-04-BB-3304', status: 'Overdue', paymentDate: null, utr: null, amount: 2000, duesHistory: 4000 },
 
   // 4th Floor
-  { id: '401', flatNumber: '401', floor: 4, wing: 'A', ownerName: 'Rohit K. Shah', residentType: 'Owner', phone: '+91 98202 11401', email: 'rohit.shah401@gmail.com', members: 3, vehicle: 'MH-04-DD-8841', status: 'Paid', paymentDate: '02 Aug 2026', utr: 'UTR89201419216', amount: 2500, duesHistory: 0 },
-  { id: '402', flatNumber: '402', floor: 4, wing: 'A', ownerName: 'Meena K. Pillai', residentType: 'Owner', phone: '+91 98336 55402', email: 'meena.pillai@gmail.com', members: 2, vehicle: 'MH-04-EE-3342', status: 'Paid', paymentDate: '04 Aug 2026', utr: 'UTR89201419217', amount: 2500, duesHistory: 0 },
-  { id: '403', flatNumber: '403', floor: 4, wing: 'A', ownerName: 'Rajesh S. Iyer', residentType: 'Owner', phone: '+91 98218 99403', email: 'rajesh.iyer@hcl.com', members: 4, vehicle: 'MH-04-FF-7743', status: 'Paid', paymentDate: '09 Aug 2026', utr: 'UTR89201419218', amount: 2500, duesHistory: 0 },
-  { id: '404', flatNumber: '404', floor: 4, wing: 'A', ownerName: 'Usha R. Bhatt', residentType: 'Owner', phone: '+91 98191 22404', email: 'usha.bhatt@gmail.com', members: 3, vehicle: 'MH-04-GG-5544', status: 'Pending', paymentDate: null, utr: null, amount: 2500, duesHistory: 0 },
-  { id: '405', flatNumber: '405', floor: 4, wing: 'A', ownerName: 'Nitin G. Chaurasia', residentType: 'Tenant', phone: '+91 98922 77405', email: 'nitin.c@gmail.com', members: 2, vehicle: 'MH-04-HH-1145', status: 'Overdue', paymentDate: null, utr: null, amount: 2500, duesHistory: 2500 },
+  { id: '401', flatNumber: '401', floor: 4, wing: 'A', unitType: 'Flat', ownerName: 'Rajkumar Singh & Rajnibala (Treasurer)', residentType: 'Owner', phone: '+91 93201 77469', email: 'rajkumar.singh.treasurer@gmail.com', members: 4, vehicle: 'MH-04-DD-4401', status: 'Paid', paymentDate: '01 Aug 2026', utr: 'UTR89201419401', amount: 2000, duesHistory: 0 },
+  { id: '402', flatNumber: '402', floor: 4, wing: 'A', unitType: 'Flat', ownerName: 'Suman B. Yadav', residentType: 'Owner', phone: '+91 98336 40202', email: 'suman.yadav402@gmail.com', members: 3, vehicle: 'MH-04-EE-4402', status: 'Paid', paymentDate: '04 Aug 2026', utr: 'UTR89201419402', amount: 2000, duesHistory: 0 },
+  { id: '403', flatNumber: '403', floor: 4, wing: 'A', unitType: 'Flat', ownerName: 'Vimla Chowbe', residentType: 'Owner', phone: '+91 98218 40303', email: 'vimla.chowbe403@gmail.com', members: 3, vehicle: 'MH-04-FF-4403', status: 'Paid', paymentDate: '09 Aug 2026', utr: 'UTR89201419403', amount: 2000, duesHistory: 0 },
+  { id: '404', flatNumber: '404', floor: 4, wing: 'A', unitType: 'Flat', ownerName: 'Kumud Niwas & Lalita Niwas', residentType: 'Owner', phone: '+91 98191 40404', email: 'kumud.niwas404@gmail.com', members: 4, vehicle: 'MH-04-GG-4404', status: 'Pending', paymentDate: null, utr: null, amount: 2000, duesHistory: 0 },
 
   // 5th Floor
-  { id: '501', flatNumber: '501', floor: 5, wing: 'A', ownerName: 'Shilpa V. Reddy', residentType: 'Owner', phone: '+91 98207 44501', email: 'shilpa.reddy@gmail.com', members: 4, vehicle: 'MH-04-JJ-6651', status: 'Paid', paymentDate: '06 Aug 2026', utr: 'UTR89201419221', amount: 2500, duesHistory: 0 },
-  { id: '502', flatNumber: '502', floor: 5, wing: 'A', ownerName: 'Girish M. Jain', residentType: 'Owner', phone: '+91 98339 88502', email: 'girish.jain@gmail.com', members: 5, vehicle: 'MH-04-KK-9952', status: 'Paid', paymentDate: '03 Aug 2026', utr: 'UTR89201419222', amount: 2500, duesHistory: 0 },
-  { id: '503', flatNumber: '503', floor: 5, wing: 'A', ownerName: 'Lata S. Nayak', residentType: 'Owner', phone: '+91 98219 11503', email: 'lata.nayak@gmail.com', members: 2, vehicle: 'MH-04-LL-2253', status: 'Paid', paymentDate: '05 Aug 2026', utr: 'UTR89201419223', amount: 2500, duesHistory: 0 },
-  { id: '504', flatNumber: '504', floor: 5, wing: 'A', ownerName: 'Vijay K. Saxena', residentType: 'Owner', phone: '+91 98197 44504', email: 'vijay.saxena@gmail.com', members: 3, vehicle: 'MH-04-MM-8854', status: 'Pending', paymentDate: null, utr: null, amount: 2500, duesHistory: 0 },
-  { id: '505', flatNumber: '505', floor: 5, wing: 'A', ownerName: 'Seema Thakur & Harish', residentType: 'Tenant', phone: '+91 98929 66505', email: 'harish.thakur@gmail.com', members: 3, vehicle: 'MH-04-NN-4455', status: 'Overdue', paymentDate: null, utr: null, amount: 2500, duesHistory: 5000 },
+  { id: '501', flatNumber: '501', floor: 5, wing: 'A', unitType: 'Flat', ownerName: 'Arun Kumar Mondal', residentType: 'Owner', phone: '+91 98207 50101', email: 'arun.mondal501@gmail.com', members: 4, vehicle: 'MH-04-JJ-5501', status: 'Paid', paymentDate: '06 Aug 2026', utr: 'UTR89201419501', amount: 2000, duesHistory: 0 },
+  { id: '502', flatNumber: '502', floor: 5, wing: 'A', unitType: 'Flat', ownerName: 'Sabiya Kalim Khan', residentType: 'Owner', phone: '+91 98339 50202', email: 'sabiya.khan502@gmail.com', members: 5, vehicle: 'MH-04-KK-5502', status: 'Paid', paymentDate: '03 Aug 2026', utr: 'UTR89201419502', amount: 2000, duesHistory: 0 },
+  { id: '503', flatNumber: '503', floor: 5, wing: 'A', unitType: 'Flat', ownerName: 'Subhadradevi H. Kotgwal', residentType: 'Owner', phone: '+91 98219 50303', email: 'subhadradevi.kotgwal503@gmail.com', members: 3, vehicle: 'MH-04-LL-5503', status: 'Paid', paymentDate: '05 Aug 2026', utr: 'UTR89201419503', amount: 2000, duesHistory: 0 },
+  { id: '504', flatNumber: '504', floor: 5, wing: 'A', unitType: 'Flat', ownerName: 'Suresh Kumar Jha', residentType: 'Owner', phone: '+91 98197 50404', email: 'suresh.jha504@gmail.com', members: 3, vehicle: 'MH-04-MM-5504', status: 'Pending', paymentDate: null, utr: null, amount: 2000, duesHistory: 0 },
+
+  // 6th Floor
+  { id: '601', flatNumber: '601', floor: 6, wing: 'A', unitType: 'Flat', ownerName: 'Roopesh Rane', residentType: 'Owner', phone: '+91 98202 60101', email: 'roopesh.rane601@gmail.com', members: 4, vehicle: 'MH-04-NN-6601', status: 'Paid', paymentDate: '02 Aug 2026', utr: 'UTR89201419601', amount: 2000, duesHistory: 0 },
+  { id: '602', flatNumber: '602', floor: 6, wing: 'A', unitType: 'Flat', ownerName: 'Ravi P. Purohit', residentType: 'Owner', phone: '+91 98336 60202', email: 'ravi.purohit602@gmail.com', members: 3, vehicle: 'MH-04-PP-6602', status: 'Paid', paymentDate: '04 Aug 2026', utr: 'UTR89201419602', amount: 2000, duesHistory: 0 },
+  { id: '603', flatNumber: '603', floor: 6, wing: 'A', unitType: 'Flat', ownerName: 'Wasudev Kelkar', residentType: 'Owner', phone: '+91 98218 60303', email: 'wasudev.kelkar603@gmail.com', members: 3, vehicle: 'MH-04-RR-6603', status: 'Paid', paymentDate: '07 Aug 2026', utr: 'UTR89201419603', amount: 2000, duesHistory: 0 },
+  { id: '604', flatNumber: '604', floor: 6, wing: 'A', unitType: 'Flat', ownerName: 'Irfan Ansar Ahmed Shaikh', residentType: 'Owner', phone: '+91 98922 60404', email: 'irfan.shaikh604@gmail.com', members: 4, vehicle: 'MH-04-SS-6604', status: 'Overdue', paymentDate: null, utr: null, amount: 2000, duesHistory: 4000 },
+
+  // Commercial Shops (Ground Floor)
+  { id: 'S001', flatNumber: 'S-01', code: 'S001', floor: 'Shop', wing: 'Comm', unitType: 'Shop', shopNumber: 'Shop 1', ownerName: 'Kruparam', residentType: 'Commercial', phone: '+91 98200 90001', email: 'kruparam.shop1@gmail.com', members: 2, vehicle: 'MH-04-TT-9001', status: 'Paid', paymentDate: '01 Aug 2026', utr: 'UTR89201419S01', amount: 1200, duesHistory: 0 },
+  { id: 'S002', flatNumber: 'S-02', code: 'S002', floor: 'Shop', wing: 'Comm', unitType: 'Shop', shopNumber: 'Shop 2', ownerName: 'Mr. Kruparam', residentType: 'Commercial', phone: '+91 98200 90002', email: 'kruparam.shop2@gmail.com', members: 2, vehicle: 'MH-04-TT-9002', status: 'Paid', paymentDate: '05 Aug 2026', utr: 'UTR89201419S02', amount: 1200, duesHistory: 0 },
+  { id: 'S003', flatNumber: 'S-03', code: 'S003', floor: 'Shop', wing: 'Comm', unitType: 'Shop', shopNumber: 'Shop 3', ownerName: 'Phir Ahmad Shaikh', residentType: 'Commercial', phone: '+91 98200 90003', email: 'phir.shaikh.shop3@gmail.com', members: 3, vehicle: 'MH-04-UU-9003', status: 'Pending', paymentDate: null, utr: null, amount: 1200, duesHistory: 0 },
+  { id: 'S004', flatNumber: 'S-04', code: 'S004', floor: 'Shop', wing: 'Comm', unitType: 'Shop', shopNumber: 'Shop 4', ownerName: 'Tabrez P. Shaikh & Rizwana Tabrez', residentType: 'Commercial', phone: '+91 98200 90004', email: 'tabrez.shaikh.shop4@gmail.com', members: 2, vehicle: 'MH-04-VV-9004', status: 'Paid', paymentDate: '08 Aug 2026', utr: 'UTR89201419S04', amount: 1200, duesHistory: 0 },
+  { id: 'S005', flatNumber: 'S-05', code: 'S005', floor: 'Shop', wing: 'Comm', unitType: 'Shop', shopNumber: 'Shop 5', ownerName: 'Santosh A Kolhe Patil & Mrs. Sayali S. Kolhe Patil', residentType: 'Commercial', phone: '+91 98200 90005', email: 'santosh.kolhe.shop5@gmail.com', members: 2, vehicle: 'MH-04-WW-9005', status: 'Pending', paymentDate: null, utr: null, amount: 1200, duesHistory: 0 },
+  { id: 'S006', flatNumber: 'S-06', code: 'S006', floor: 'Shop', wing: 'Comm', unitType: 'Shop', shopNumber: 'Shop 6', ownerName: 'Mahendra .B.Bhoite & Sandhya. M. Bhoite', residentType: 'Commercial', phone: '+91 98200 90006', email: 'mahendra.bhoite.shop6@gmail.com', members: 2, vehicle: 'MH-04-XX-9006', status: 'Paid', paymentDate: '02 Aug 2026', utr: 'UTR89201419S06', amount: 1200, duesHistory: 0 },
 ];
 
 export const initialExpenses = [
@@ -89,11 +111,13 @@ export const initialExpenses = [
 ];
 
 export const initialTransactions = [
-  { id: 'tx-1', date: '10 Aug 2026', desc: 'UPI: Flat 304 Sanjay Kumar Maint Aug 26', type: 'Credit', amount: 2500, ref: 'UPI/VJSB/89201419214', balance: 384500 },
-  { id: 'tx-2', date: '09 Aug 2026', desc: 'UPI: Flat 403 Rajesh Iyer Maint Aug 26', type: 'Credit', amount: 2500, ref: 'UPI/VJSB/89201419218', balance: 382000 },
-  { id: 'tx-3', date: '08 Aug 2026', desc: 'UPI: Mira Road Water Supply (3 Tankers)', type: 'Debit', amount: 4500, ref: 'UPI/VJSB/TNK8844', balance: 379500 },
-  { id: 'tx-4', date: '08 Aug 2026', desc: 'UPI: Flat 303 Kavita Pandey Maint Aug 26', type: 'Credit', amount: 2500, ref: 'UPI/VJSB/89201419213', balance: 384000 },
-  { id: 'tx-5', date: '07 Aug 2026', desc: 'UPI: Flat 203 Arun Kapoor Maint Aug 26', type: 'Credit', amount: 2500, ref: 'UPI/VJSB/89201419208', balance: 381500 },
-  { id: 'tx-6', date: '06 Aug 2026', desc: 'UPI: Flat 501 Shilpa Reddy Maint Aug 26', type: 'Credit', amount: 2500, ref: 'UPI/VJSB/89201419221', balance: 379000 },
-  { id: 'tx-7', date: '05 Aug 2026', desc: 'BILLPAY: Adani Electricity Common Meter', type: 'Debit', amount: 8420, ref: 'NEFT/VJSB/ADANI8420', balance: 376500 },
+  { id: 'tx-1', date: '09 Aug 2026', desc: 'UPI: Flat 403 Vimla Chowbe Maint Aug 26', type: 'Credit', amount: 2000, ref: 'UPI/VJSB/89201419403', balance: 462500 },
+  { id: 'tx-2', date: '08 Aug 2026', desc: 'UPI: Shop S-04 Tabrez Shaikh Maint Aug 26', type: 'Credit', amount: 1200, ref: 'UPI/VJSB/89201419S04', balance: 460500 },
+  { id: 'tx-3', date: '08 Aug 2026', desc: 'UPI: Mira Road Water Supply (3 Tankers)', type: 'Debit', amount: 4500, ref: 'UPI/VJSB/TNK8844', balance: 459300 },
+  { id: 'tx-4', date: '08 Aug 2026', desc: 'UPI: Flat 303 Harbajan Singh Maint Aug 26', type: 'Credit', amount: 2000, ref: 'UPI/VJSB/89201419303', balance: 463800 },
+  { id: 'tx-5', date: '07 Aug 2026', desc: 'UPI: Flat 203 Deepaksingh Rawat Maint Aug 26', type: 'Credit', amount: 2000, ref: 'UPI/VJSB/89201419203', balance: 461800 },
+  { id: 'tx-6', date: '06 Aug 2026', desc: 'UPI: Flat 501 Arun Mondal Maint Aug 26', type: 'Credit', amount: 2000, ref: 'UPI/VJSB/89201419501', balance: 459800 },
+  { id: 'tx-7', date: '05 Aug 2026', desc: 'BILLPAY: Adani Electricity Common Meter', type: 'Debit', amount: 8420, ref: 'NEFT/VJSB/ADANI8420', balance: 457800 },
+  { id: 'tx-8', date: '01 Aug 2026', desc: 'UPI: Flat 401 Rajkumar Singh Maint Aug 26', type: 'Credit', amount: 2000, ref: 'UPI/VJSB/89201419401', balance: 466220 },
+  { id: 'tx-9', date: '01 Aug 2026', desc: 'UPI: Shop S-01 Kruparam Maint Aug 26', type: 'Credit', amount: 1200, ref: 'UPI/VJSB/89201419S01', balance: 464220 },
 ];
